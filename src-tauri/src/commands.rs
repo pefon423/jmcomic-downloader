@@ -454,8 +454,8 @@ pub async fn update_downloaded_comics(app: AppHandle) -> CommandResult<()> {
     let config = app.get_config();
     let download_manager = app.get_download_manager();
 
-    // 从下载目录中获取已下载的漫画
-    let downloaded_comics = get_downloaded_comics(app.clone());
+    // 扫描下载目录，获取本地已有的漫画，章节无论是目录还是zip都会被识别
+    let downloaded_comics = utils::scan_local_comics(&app);
 
     let total = downloaded_comics.len() as i64;
     let interval_sec = config.read().update_downloaded_comics_interval_sec;
@@ -482,13 +482,14 @@ pub async fn update_downloaded_comics(app: AppHandle) -> CommandResult<()> {
             }
         };
 
-        // 至少有一个章节已下载
-        let has_downloaded_chapter = comic
-            .chapter_infos
-            .iter()
-            .any(|chapter_info| chapter_info.is_downloaded == Some(true));
+        // 章节在本地存在：扫描到的章节ID里有它，或者已被识别为已下载
+        let is_local = |chapter_info: &ChapterInfo| {
+            chapter_info.is_downloaded == Some(true)
+                || downloaded_comic.chapter_ids.contains(&chapter_info.chapter_id)
+        };
 
-        if !has_downloaded_chapter {
+        // 至少有一个章节已下载
+        if !comic.chapter_infos.iter().any(is_local) {
             sleep(Duration::from_secs(interval_sec)).await;
             continue;
         }
@@ -496,7 +497,7 @@ pub async fn update_downloaded_comics(app: AppHandle) -> CommandResult<()> {
         let chapter_infos: Vec<&ChapterInfo> = comic
             .chapter_infos
             .iter()
-            .filter(|chapter| chapter.is_downloaded != Some(true))
+            .filter(|chapter| !is_local(chapter))
             .collect();
 
         if chapter_infos.is_empty() {

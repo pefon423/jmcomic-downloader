@@ -219,11 +219,78 @@ impl DownloadTask {
             tracing::error!(err_title, message);
         }
 
+        let zip_after_download = self.app.get_config().read().zip_after_download;
+        if zip_after_download {
+            if let Err(err) = self.zip_chapter_download_dir() {
+                let err_title = "将章节目录打包成zip失败，已保留原目录";
+                let message = err.to_message();
+                tracing::error!(err_title, message);
+            }
+        }
+
         self.sleep_between_chapter().await;
         tracing::info!("章节下载成功");
 
         self.set_state(DownloadTaskState::Completed);
         self.emit_download_task_update_event();
+    }
+
+    /// 将章节目录打包成同名zip(放在漫画目录下)，成功后删除章节目录
+    #[instrument(level = "error", skip_all)]
+    fn zip_chapter_download_dir(&self) -> eyre::Result<()> {
+        use zip::{write::SimpleFileOptions, CompressionMethod, ZipWriter};
+
+        let chapter_download_dir = self
+            .chapter_info
+            .chapter_download_dir
+            .as_ref()
+            .ok_or_eyre("`chapter_download_dir`字段为`None`")?;
+        let dir_name = self
+            .chapter_info
+            .get_chapter_download_dir_name()
+            .wrap_err("获取章节下载目录名失败")?;
+
+        let zip_path = chapter_download_dir.with_file_name(format!("{dir_name}.zip"));
+        let temp_zip_path = chapter_download_dir.with_file_name(format!(".打包中-{dir_name}.zip"));
+
+        let zip_file = std::fs::File::create(&temp_zip_path)
+            .wrap_err(format!("创建文件`{}`失败", temp_zip_path.display()))?;
+        let mut zip_writer = ZipWriter::new(zip_file);
+        // 图片本身已经压缩过，用Stored即可
+        let options = SimpleFileOptions::default().compression_method(CompressionMethod::Stored);
+
+        for entry in std::fs::read_dir(chapter_download_dir)
+            .wrap_err(format!("读取`{}`失败", chapter_download_dir.display()))?
+            .filter_map(Result::ok)
+        {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            let filename = entry.file_name().to_string_lossy().to_string();
+            zip_writer
+                .start_file(&filename, options)
+                .wrap_err(format!("在zip中创建`{filename}`失败"))?;
+            let mut file = std::fs::File::open(&path)
+                .wrap_err(format!("打开`{}`失败", path.display()))?;
+            std::io::copy(&mut file, &mut zip_writer)
+                .wrap_err(format!("将`{}`写入zip失败", path.display()))?;
+        }
+        zip_writer
+            .finish()
+            .wrap_err(format!("关闭`{}`失败", temp_zip_path.display()))?;
+
+        std::fs::rename(&temp_zip_path, &zip_path).wrap_err(format!(
+            "将`{}`重命名为`{}`失败",
+            temp_zip_path.display(),
+            zip_path.display()
+        ))?;
+        // zip写入成功后才删除章节目录
+        std::fs::remove_dir_all(chapter_download_dir)
+            .wrap_err(format!("删除`{}`失败", chapter_download_dir.display()))?;
+
+        tracing::debug!("章节目录已打包成zip并删除");
+        Ok(())
     }
 
     #[instrument(level = "error", skip_all)]

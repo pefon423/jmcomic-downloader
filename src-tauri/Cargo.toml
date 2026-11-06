@@ -44,7 +44,7 @@ flate2 = { version = "1.0.34" }
 parking_lot = { version = "0.12.3", features = ["send_guard"] }
 rayon = { version = "1.10.0" }
 uuid = { version = "1.15.1", features = ["v4"] }
-zip = { version = "2.2.3", default-features = false }
+zip = { version = "2.2.3", default-features = false, features = ["deflate"] }
 tracing = { version = "0.1.41" }
 tracing-subscriber = { version = "0.3.19", features = ["json", "time", "local-time"] }
 tracing-appender = { version = "0.2.3" }

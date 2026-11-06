@@ -120,5 +120,15 @@ watch([() => store.config?.apiDomainMode, () => store.config?.customApiDomain], 
 
     <span class="font-bold mt-2">其他</span>
     <n-checkbox class="w-fit" v-model:checked="store.config.shouldDownloadCover">下载封面</n-checkbox>
+    <n-tooltip placement="top" trigger="hover">
+      <template #trigger>
+        <n-checkbox class="w-fit" v-model:checked="store.config.zipAfterDownload">下载后转成zip并删除目录</n-checkbox>
+      </template>
+      每个章节下载完成后，将章节目录打包成同名zip，并删除原目录
+      <br />
+      更新库存时，zip中的章节同样会被识别为已下载
+      <br />
+      <span class="text-red">已转成zip的章节暂时无法导出PDF/CBZ</span>
+    </n-tooltip>
   </div>
 </template>

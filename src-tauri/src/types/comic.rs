@@ -337,6 +337,18 @@ impl Comic {
             .into_iter()
             .filter_map(Result::ok)
         {
+            // 被打包成zip的章节，只标记为已下载
+            if entry.is_zip() {
+                if let Ok(zip_metadata) = utils::read_zip_metadata(entry.path()) {
+                    for chapter_info in &mut self.chapter_infos {
+                        if zip_metadata.chapter_ids.contains(&chapter_info.chapter_id) {
+                            chapter_info.is_downloaded = Some(true);
+                        }
+                    }
+                }
+                continue;
+            }
+
             if !entry.is_chapter_metadata() {
                 continue;
             }
