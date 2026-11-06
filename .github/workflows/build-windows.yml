@@ -1,0 +1,50 @@
+name: "build-windows"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "feat/**"
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Build tauri app
+        run: pnpm tauri build
+
+      - name: Collect artifacts
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          cp src-tauri/target/release/bundle/nsis/*-setup.exe artifacts/
+          cp src-tauri/target/release/jmcomic-downloader.exe artifacts/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: artifacts/*
