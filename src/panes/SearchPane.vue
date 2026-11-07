@@ -120,4 +120,3 @@ async function search(keyword: string, page: number, sort: SearchSort) {
       @update:page="search(searchInput.trim(), $event, sortSelected)" />
   </div>
 </template>
-啓

@@ -92,4 +92,3 @@ async function showComicDownloadDirInFileManager() {
     </div>
   </div>
 </template>
-딀

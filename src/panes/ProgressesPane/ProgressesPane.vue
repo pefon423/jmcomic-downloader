@@ -213,4 +213,3 @@ async function selectDownloadDir() {
     <SettingsDialog v-model:showing="settingsDialogShowing" />
   </div>
 </template>
-s

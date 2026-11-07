@@ -46,4 +46,3 @@ async function showConfigInFileManager() {
     </n-dialog>
   </n-modal>
 </template>
-

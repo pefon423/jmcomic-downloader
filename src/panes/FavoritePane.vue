@@ -123,4 +123,3 @@ async function syncFavoriteFolder() {
       @update:page="getFavourite(folderIdSelected, $event, sortSelected)" />
   </div>
 </template>
- 

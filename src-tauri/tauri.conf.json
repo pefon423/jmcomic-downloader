@@ -36,10 +36,9 @@
       "nsis": {
         "installMode": "perMachine",
         "languages": [
-          "SimpChinese"
+          "TradChinese"
         ]
       }
     }
   }
 }
-暰

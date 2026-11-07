@@ -326,4 +326,3 @@ const UncompletedProgress = defineComponent({
   @apply bg-[rgba(46,115,252,0.5)];
 }
 </style>
-e

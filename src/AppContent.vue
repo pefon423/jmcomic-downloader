@@ -137,4 +137,3 @@ onMounted(async () => {
   @apply px-2;
 }
 </style>
-t
