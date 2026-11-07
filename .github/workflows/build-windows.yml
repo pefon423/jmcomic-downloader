@@ -34,7 +34,15 @@ jobs:
         run: pnpm install
 
       - name: Build tauri app
-        run: pnpm tauri build
+        shell: bash
+        run: |
+          set +e
+          pnpm tauri build 2>&1 | tee build.log
+          code=${PIPESTATUS[0]}
+          if [ "$code" -ne 0 ]; then
+            grep -nE -A6 "^error|error TS|error\[|ERROR" build.log | head -c 3000 | tr '\n' '|' | sed 's/%/%25/g' | while read -r line; do echo "::error::$line"; done
+          fi
+          exit $code
 
       - name: Collect artifacts
         shell: bash
