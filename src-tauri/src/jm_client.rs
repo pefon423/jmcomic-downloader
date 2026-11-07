@@ -46,6 +46,7 @@ enum ApiPath {
     GetFavoriteFolder,
     GetWeeklyInfo,
     GetWeekly,
+    CategoriesFilter,
 }
 impl ApiPath {
     fn as_str(&self) -> &'static str {
@@ -61,6 +62,7 @@ impl ApiPath {
             ApiPath::GetFavoriteFolder => "/favorite",
             ApiPath::GetWeeklyInfo => "/week",
             ApiPath::GetWeekly => "/week/filter",
+            ApiPath::CategoriesFilter => "/categories/filter",
         }
     }
 }
@@ -293,6 +295,47 @@ impl JmClient {
         Err(eyre!(
             "将解密后的数据解析为SearchRespData或RedirectRespData失败: {data}"
         ))
+    }
+
+    /// 获取韩漫分类下按最新更新排序的漫画
+    #[instrument(level = "error", skip_all, fields(page = page))]
+    pub async fn get_latest_hanman(&self, page: i64) -> eyre::Result<SearchRespData> {
+        let query = json!({
+            "page": page,
+            "order": "",
+            "c": "hanman",
+            "o": "mr",
+        });
+        let ts = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
+        let http_resp = self
+            .jm_get(ApiPath::CategoriesFilter, Some(query), ts)
+            .await?;
+        // 检查http响应状态码
+        let status = http_resp.status();
+        let body = http_resp.text().await?;
+        if status != reqwest::StatusCode::OK {
+            return Err(eyre!(
+                "获取最新韩漫失败，预料之外的状态码({status}): {body}"
+            ));
+        }
+        // 尝试将body解析为JmResp
+        let jm_resp = serde_json::from_str::<JmResp>(&body)
+            .wrap_err(format!("将body解析为JmResp失败: {body}"))?;
+        // 检查JmResp的code字段
+        if jm_resp.code != 200 {
+            return Err(eyre!("获取最新韩漫失败，预料之外的code: {jm_resp:?}"));
+        }
+        // 检查JmResp的data字段
+        let data = jm_resp.data.as_str().ok_or_eyre(format!(
+            "获取最新韩漫失败，data字段不是字符串: {jm_resp:?}"
+        ))?;
+        // 解密data字段
+        let data = decrypt_data(ts, data)?;
+        // 尝试将解密后的data字段解析为SearchRespData
+        let search_resp_data = serde_json::from_str::<SearchRespData>(&data).wrap_err(
+            format!("将解密后的data字段解析为SearchRespData失败: {data}"),
+        )?;
+        Ok(search_resp_data)
     }
 
     #[instrument(level = "error", skip_all, fields(aid = aid))]

@@ -13,6 +13,7 @@ import DownloadedPane from './panes/DownloadedPane/DownloadedPane.vue'
 import { useStore } from './store.ts'
 import LogDialog from './dialogs/LogDialog.vue'
 import WeeklyPane from './panes/WeeklyPane.vue'
+import HanmanPane from './panes/HanmanPane.vue'
 
 const store = useStore()
 
@@ -70,6 +71,9 @@ onMounted(async () => {
       </n-tab-pane>
       <n-tab-pane class="h-full overflow-auto p-0!" name="weekly" tab="每週必看" display-directive="show">
         <WeeklyPane />
+      </n-tab-pane>
+      <n-tab-pane class="h-full overflow-auto p-0!" name="hanman" tab="最新韓漫" display-directive="show">
+        <HanmanPane />
       </n-tab-pane>
       <n-tab-pane class="h-full overflow-auto p-0!" name="downloaded" tab="本地庫存" display-directive="show">
         <DownloadedPane />

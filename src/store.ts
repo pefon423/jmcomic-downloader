@@ -11,6 +11,7 @@ export const useStore = defineStore('store', () => {
   const progresses = ref<Map<number, ProgressData>>(new Map())
   const getFavoriteResult = ref<GetFavoriteResult>()
   const searchResult = ref<SearchResult>()
+  const hanmanResult = ref<SearchResult>()
   const progressesPaneTabName = ref<ProgressesPaneTabName>('uncompleted')
   const getWeeklyResult = ref<GetWeeklyResult>()
   const downloadedComics = ref<Comic[]>([])
@@ -23,6 +24,7 @@ export const useStore = defineStore('store', () => {
     progresses,
     getFavoriteResult,
     searchResult,
+    hanmanResult,
     progressesPaneTabName,
     getWeeklyResult,
     downloadedComics,

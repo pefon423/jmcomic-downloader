@@ -59,6 +59,14 @@ async getWeeklyInfo() : Promise<Result<GetWeeklyInfoRespData, CommandError>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getLatestHanman(page: number) : Promise<Result<SearchResult, CommandError>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_latest_hanman", { page }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getWeekly(categoryId: string, typeId: string) : Promise<Result<GetWeeklyResult, CommandError>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_weekly", { categoryId, typeId }) };

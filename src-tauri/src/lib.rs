@@ -43,6 +43,7 @@ pub fn run() {
             save_config,
             login,
             search,
+            get_latest_hanman,
             get_comic,
             get_favorite_folder,
             get_weekly_info,

@@ -25,7 +25,8 @@ use crate::extensions::{AppHandleExt, EyreReportToMessage, WalkDirEntryExt};
 use crate::responses::{GetUserProfileRespData, GetWeeklyInfoRespData};
 use crate::types::{
     ChapterInfo, Comic, ComicInFavorite, ComicInSearch, ComicInWeekly, FavoriteSort,
-    GetFavoriteResult, GetWeeklyResult, LogMetadata, SearchResultVariant, SearchSort,
+    GetFavoriteResult, GetWeeklyResult, LogMetadata, SearchResult, SearchResultVariant,
+    SearchSort,
 };
 use crate::{export, logger, utils};
 
@@ -141,6 +142,23 @@ pub async fn search(
 
     let search_result = SearchResultVariant::from_search_resp(&app, search_resp)
         .map_err(|err| CommandError::from("搜索失败", err))?;
+
+    Ok(search_result)
+}
+
+#[tauri::command(async)]
+#[specta::specta]
+#[instrument(level = "error", skip_all, fields(page = page))]
+pub async fn get_latest_hanman(app: AppHandle, page: i64) -> CommandResult<SearchResult> {
+    let jm_client = app.get_jm_client();
+
+    let resp_data = jm_client
+        .get_latest_hanman(page)
+        .await
+        .map_err(|err| CommandError::from("获取最新韩漫失败", err))?;
+
+    let search_result = SearchResult::from_resp_data(&app, resp_data)
+        .map_err(|err| CommandError::from("获取最新韩漫失败", err))?;
 
     Ok(search_result)
 }
