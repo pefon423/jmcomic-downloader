@@ -598,6 +598,7 @@ pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
     let download_dir = app.get_config().read().download_dir.clone();
     // 遍历下载目录，获取所有漫画元数据文件的路径和修改时间
     let mut metadata_path_with_modify_time = Vec::new();
+    let mut comic_dirs: std::collections::HashSet<PathBuf> = std::collections::HashSet::new();
     for entry in WalkDir::new(&download_dir)
         .into_iter()
         .filter_map(Result::ok)
@@ -637,8 +638,20 @@ pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
             }
         };
 
+        if entry.is_comic_metadata() {
+            if let Some(parent) = path.parent() {
+                comic_dirs.insert(parent.to_path_buf());
+            }
+        }
         metadata_path_with_modify_time.push((path.to_path_buf(), modify_time));
     }
+    // 有元数据json的漫画目录优先，不需要再打开它里面的zip(章节zip)，以尽快列出
+    metadata_path_with_modify_time.retain(|(path, _)| {
+        let is_zip = path
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("zip"));
+        !is_zip || !path.ancestors().skip(1).any(|dir| comic_dirs.contains(dir))
+    });
     // 按照文件修改时间排序，最新的排在最前面
     metadata_path_with_modify_time.sort_by(|(_, a), (_, b)| b.cmp(a));
 

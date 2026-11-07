@@ -145,6 +145,115 @@ pub fn read_zip_metadata(zip_path: &Path) -> eyre::Result<ZipMetadata> {
     Ok(zip_metadata)
 }
 
+/// zip索引文件名，放在zip所在目录，记录该目录下各个zip的元数据，避免每次都打开zip
+const ZIP_INDEX_FILENAME: &str = "zip索引.json";
+
+#[derive(Default, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ZipIndexEntry {
+    size: u64,
+    /// 修改时间(毫秒)
+    mtime: i64,
+    comic_id: Option<i64>,
+    comic_name: Option<String>,
+    chapter_ids: Vec<i64>,
+}
+
+/// 获取zip的(大小, 修改时间毫秒)，用来判断zip有没有被改动过
+fn zip_fingerprint(zip_path: &Path) -> Option<(u64, i64)> {
+    let metadata = std::fs::metadata(zip_path).ok()?;
+    let mtime = metadata
+        .modified()
+        .ok()?
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()?
+        .as_millis();
+    Some((metadata.len(), i64::try_from(mtime).ok()?))
+}
+
+/// zip索引的内存缓存，按目录加载，最后统一写回
+#[derive(Default)]
+pub struct ZipIndexCache {
+    /// 目录 -> (文件名 -> 索引项, 是否被修改过)
+    dirs: HashMap<PathBuf, (HashMap<String, ZipIndexEntry>, bool)>,
+}
+
+impl ZipIndexCache {
+    fn dir_index(&mut self, dir: &Path) -> &mut (HashMap<String, ZipIndexEntry>, bool) {
+        self.dirs.entry(dir.to_path_buf()).or_insert_with(|| {
+            let index = std::fs::read_to_string(dir.join(ZIP_INDEX_FILENAME))
+                .ok()
+                .and_then(|s| serde_json::from_str(s.trim_start_matches('\u{feff}')).ok())
+                .unwrap_or_default();
+            (index, false)
+        })
+    }
+
+    /// 记录zip的元数据(例如刚打包完成时)
+    pub fn record(&mut self, zip_path: &Path, zip_metadata: &ZipMetadata) {
+        let (Some(dir), Some(name), Some((size, mtime))) = (
+            zip_path.parent(),
+            zip_path.file_name().map(|n| n.to_string_lossy().to_string()),
+            zip_fingerprint(zip_path),
+        ) else {
+            return;
+        };
+        let mut chapter_ids: Vec<i64> = zip_metadata.chapter_ids.iter().copied().collect();
+        chapter_ids.sort_unstable();
+        let entry = ZipIndexEntry {
+            size,
+            mtime,
+            comic_id: zip_metadata.comic.as_ref().map(|(id, _)| *id),
+            comic_name: zip_metadata.comic.as_ref().map(|(_, name)| name.clone()),
+            chapter_ids,
+        };
+        let dir_index = self.dir_index(dir);
+        dir_index.0.insert(name, entry);
+        dir_index.1 = true;
+    }
+
+    /// 优先使用索引，大小和修改时间都一致才信任；否则打开zip读取并更新索引
+    pub fn get_metadata(&mut self, zip_path: &Path) -> eyre::Result<ZipMetadata> {
+        if let (Some(dir), Some(name), Some((size, mtime))) = (
+            zip_path.parent(),
+            zip_path.file_name().map(|n| n.to_string_lossy().to_string()),
+            zip_fingerprint(zip_path),
+        ) {
+            if let Some(entry) = self.dir_index(dir).0.get(&name) {
+                if entry.size == size && entry.mtime == mtime {
+                    return Ok(ZipMetadata {
+                        comic: entry.comic_id.map(|id| (id, entry.comic_name.clone().unwrap_or_default())),
+                        chapter_ids: entry.chapter_ids.iter().copied().collect(),
+                    });
+                }
+            }
+        }
+        let zip_metadata = read_zip_metadata(zip_path)?;
+        self.record(zip_path, &zip_metadata);
+        Ok(zip_metadata)
+    }
+
+    /// 把有改动的索引写回磁盘
+    pub fn flush(&mut self) {
+        for (dir, (index, dirty)) in &mut self.dirs {
+            if !*dirty {
+                continue;
+            }
+            let path = dir.join(ZIP_INDEX_FILENAME);
+            match serde_json::to_string_pretty(index) {
+                Ok(json) => {
+                    if let Err(err) = std::fs::write(&path, json) {
+                        tracing::warn!("写入`{}`失败: {err}", path.display());
+                        continue;
+                    }
+                    *dirty = false;
+                }
+                Err(err) => tracing::warn!("序列化`{}`失败: {err}", path.display()),
+            }
+        }
+    }
+}
+
 /// 扫描下载目录，找出所有本地已有的漫画及其章节，章节可以是目录，也可以是zip，
 /// 漫画本身也可以整个被打包进一个zip
 #[instrument(level = "error", skip_all)]
@@ -159,6 +268,7 @@ pub fn scan_local_comics(app: &AppHandle) -> Vec<ScannedComic> {
     let mut comic_dirs: HashMap<PathBuf, i64> = HashMap::new();
     // (章节所在位置的目录, 章节ID)，最终要归属到祖先中的某个漫画目录
     let mut chapters: Vec<(PathBuf, i64)> = Vec::new();
+    let mut zip_index = ZipIndexCache::default();
 
     for entry in WalkDir::new(&download_dir)
         .into_iter()
@@ -203,7 +313,7 @@ pub fn scan_local_comics(app: &AppHandle) -> Vec<ScannedComic> {
                 chapters.push((parent.to_path_buf(), chapter_id));
             }
         } else if entry.is_zip() {
-            let zip_metadata = match read_zip_metadata(path) {
+            let zip_metadata = match zip_index.get_metadata(path) {
                 Ok(zip_metadata) => zip_metadata,
                 Err(err) => {
                     tracing::warn!("{}", err.to_message());
@@ -232,6 +342,8 @@ pub fn scan_local_comics(app: &AppHandle) -> Vec<ScannedComic> {
             }
         }
     }
+
+    zip_index.flush();
 
     for (location, chapter_id) in chapters {
         let comic_id = location

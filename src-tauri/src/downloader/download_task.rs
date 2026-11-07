@@ -26,6 +26,7 @@ use crate::{
     extensions::{AppHandleExt, EyreReportToMessage},
     jm_client::IMAGE_DOMAIN,
     types::{ChapterInfo, Comic},
+    utils,
 };
 
 pub struct DownloadTask {
@@ -288,6 +289,13 @@ impl DownloadTask {
         // zip写入成功后才删除章节目录
         std::fs::remove_dir_all(chapter_download_dir)
             .wrap_err(format!("删除`{}`失败", chapter_download_dir.display()))?;
+
+        // 把章节ID记入zip索引，之后扫描时不用再打开这个zip
+        let mut zip_metadata = utils::ZipMetadata::default();
+        zip_metadata.chapter_ids.insert(self.chapter_info.chapter_id);
+        let mut zip_index = utils::ZipIndexCache::default();
+        zip_index.record(&zip_path, &zip_metadata);
+        zip_index.flush();
 
         tracing::debug!("章节目录已打包成zip并删除");
         Ok(())
