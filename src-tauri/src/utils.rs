@@ -107,6 +107,14 @@ pub fn read_zip_metadata(zip_path: &Path) -> eyre::Result<ZipMetadata> {
 
     let mut zip_metadata = ZipMetadata::default();
     for i in 0..archive.len() {
+        // 先只看文件名(中央目录已在内存)，避免对每张图片都seek到大zip里读取
+        let Some(name) = archive.name_for_index(i) else {
+            continue;
+        };
+        if !name.ends_with("元数据.json") {
+            continue;
+        }
+
         let mut entry = archive.by_index(i).wrap_err("读取zip条目失败")?;
         if !entry.is_file() {
             continue;

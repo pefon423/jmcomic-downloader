@@ -60,7 +60,14 @@ watch(
       return
     }
 
+    // 先列出有元數據json的漫畫，再在背景讀取整部打包的zip並補進清單
     store.downloadedComics = await commands.getDownloadedComics()
+    const zipComics = await commands.getDownloadedZipComics()
+    const ids = new Set(store.downloadedComics.map((comic) => comic.id))
+    const extra = zipComics.filter((comic) => !ids.has(comic.id))
+    if (extra.length > 0) {
+      store.downloadedComics = [...store.downloadedComics, ...extra]
+    }
   },
   { immediate: true },
 )

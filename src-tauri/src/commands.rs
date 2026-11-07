@@ -589,12 +589,26 @@ pub async fn sync_favorite_folder(app: AppHandle) -> CommandResult<()> {
     Ok(())
 }
 
+/// 第一阶段：只读取漫画目录里的元数据json，速度快，用来尽快列出库存
 #[allow(clippy::needless_pass_by_value)]
-#[allow(clippy::too_many_lines)]
 #[tauri::command(async)]
 #[specta::specta]
 #[instrument(level = "error", skip_all)]
 pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
+    collect_downloaded_comics(&app, false)
+}
+
+/// 第二阶段：读取不在任何漫画目录里的zip(整个漫画被打包)，结果会用索引缓存
+#[allow(clippy::needless_pass_by_value)]
+#[tauri::command(async)]
+#[specta::specta]
+#[instrument(level = "error", skip_all)]
+pub fn get_downloaded_zip_comics(app: AppHandle) -> Vec<Comic> {
+    collect_downloaded_comics(&app, true)
+}
+
+#[allow(clippy::too_many_lines)]
+fn collect_downloaded_comics(app: &AppHandle, zip_phase: bool) -> Vec<Comic> {
     let download_dir = app.get_config().read().download_dir.clone();
     // 遍历下载目录，获取所有漫画元数据文件的路径和修改时间
     let mut metadata_path_with_modify_time = Vec::new();
@@ -607,6 +621,16 @@ pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
 
         // 除了漫画元数据文件，也要看zip(整个漫画可能被打包成了zip)
         if !entry.is_comic_metadata() && !entry.is_zip() {
+            continue;
+        }
+
+        if entry.is_comic_metadata() {
+            if let Some(parent) = path.parent() {
+                comic_dirs.insert(parent.to_path_buf());
+            }
+        }
+        // 当前阶段只处理一种文件
+        if zip_phase != entry.is_zip() {
             continue;
         }
 
@@ -638,11 +662,6 @@ pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
             }
         };
 
-        if entry.is_comic_metadata() {
-            if let Some(parent) = path.parent() {
-                comic_dirs.insert(parent.to_path_buf());
-            }
-        }
         metadata_path_with_modify_time.push((path.to_path_buf(), modify_time));
     }
     // 有元数据json的漫画目录优先，不需要再打开它里面的zip(章节zip)，以尽快列出
@@ -655,14 +674,18 @@ pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
     // 按照文件修改时间排序，最新的排在最前面
     metadata_path_with_modify_time.sort_by(|(_, a), (_, b)| b.cmp(a));
 
+    let mut zip_index = utils::ZipIndexCache::default();
     let mut downloaded_comics = Vec::new();
     for (metadata_path, _) in metadata_path_with_modify_time {
         let is_zip = metadata_path
             .extension()
             .is_some_and(|ext| ext.eq_ignore_ascii_case("zip"));
         let comic_result = if is_zip {
-            // 只有章节的zip里没有漫画元数据，返回None，直接跳过
-            Comic::from_zip(&metadata_path).transpose()
+            // 先查索引：没有漫画元数据的zip(只有章节的zip、别处来的zip)直接跳过，不用再打开
+            match zip_index.get_metadata(&metadata_path) {
+                Ok(zip_metadata) if zip_metadata.comic.is_none() => None,
+                _ => Comic::from_zip(&metadata_path).transpose(),
+            }
         } else {
             Some(Comic::from_metadata(&metadata_path))
         };
@@ -676,6 +699,7 @@ pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
             None => {}
         }
     }
+    zip_index.flush();
     // 按照漫画ID分组，以方便去重
     let mut comics_by_id: IndexMap<i64, Vec<Comic>> = IndexMap::new();
     for comic in downloaded_comics {

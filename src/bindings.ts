@@ -161,6 +161,9 @@ async syncFavoriteFolder() : Promise<Result<null, CommandError>> {
 async getDownloadedComics() : Promise<Comic[]> {
     return await TAURI_INVOKE("get_downloaded_comics");
 },
+async getDownloadedZipComics() : Promise<Comic[]> {
+    return await TAURI_INVOKE("get_downloaded_zip_comics");
+},
 async exportCbz(comic: Comic) : Promise<Result<null, CommandError>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("export_cbz", { comic }) };

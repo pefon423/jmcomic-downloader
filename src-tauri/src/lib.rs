@@ -60,6 +60,7 @@ pub fn run() {
             show_path_in_file_manager,
             sync_favorite_folder,
             get_downloaded_comics,
+            get_downloaded_zip_comics,
             export_cbz,
             export_pdf,
             export_cbz_chapters,

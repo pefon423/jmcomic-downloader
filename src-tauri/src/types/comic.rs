@@ -181,6 +181,13 @@ impl Comic {
         let mut comic: Option<Comic> = None;
         let mut chapter_ids = HashSet::new();
         for i in 0..archive.len() {
+            let Some(name) = archive.name_for_index(i) else {
+                continue;
+            };
+            if !name.ends_with("元数据.json") {
+                continue;
+            }
+
             let mut entry = archive.by_index(i).wrap_err("读取zip条目失败")?;
             if !entry.is_file() {
                 continue;
