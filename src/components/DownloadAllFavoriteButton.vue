@@ -25,10 +25,10 @@ let prepareMessage: MessageReactive | undefined
 onMounted(async () => {
   await events.downloadAllFavoritesEvent.listen(({ payload }) => {
     if (payload.event === 'GetFavoritesStart') {
-      prepareMessage = message.loading('正在获取收藏夹', { duration: 0 })
+      prepareMessage = message.loading('正在獲取收藏夾', { duration: 0 })
     } else if (payload.event === 'GetComicsProgress' && prepareMessage !== undefined) {
       const { current, total } = payload.data
-      prepareMessage.content = `正在获取收藏夹中的漫画(${current}/${total})`
+      prepareMessage.content = `正在獲取收藏夾中的漫畫(${current}/${total})`
     } else if (payload.event === 'StartCreateDownloadTasks') {
       const { comicId, comicTitle, current, total } = payload.data
       progresses.value.set(comicId, {
@@ -40,7 +40,7 @@ onMounted(async () => {
           () => {
             const progressData = progresses.value.get(comicId)
             if (progressData === undefined) return ''
-            return `${progressData.comicTitle} 正在创建下载任务(${progressData.current}/${progressData.total})`
+            return `${progressData.comicTitle} 正在創建下載任務(${progressData.current}/${progressData.total})`
           },
           { duration: 0 },
         ),
@@ -56,7 +56,7 @@ onMounted(async () => {
       const progressData = progresses.value.get(comicId)
       if (progressData) {
         progressData.progressMessage.type = 'success'
-        progressData.progressMessage.content = `${progressData.comicTitle} 创建下载任务完成(${progressData.current}/${progressData.total})`
+        progressData.progressMessage.content = `${progressData.comicTitle} 創建下載任務完成(${progressData.current}/${progressData.total})`
         setTimeout(() => {
           progressData.progressMessage.destroy()
           progresses.value.delete(comicId)
@@ -64,7 +64,7 @@ onMounted(async () => {
       }
     } else if (payload.event === 'GetComicsEnd' && prepareMessage !== undefined) {
       prepareMessage.type = 'success'
-      prepareMessage.content = '成功获取收藏夹中所有的漫画'
+      prepareMessage.content = '成功獲取收藏夾中所有的漫畫'
       setTimeout(() => {
         prepareMessage?.destroy()
         prepareMessage = undefined
@@ -78,7 +78,7 @@ async function agree() {
     return
   }
 
-  // 1秒下载5张
+  // 1秒下載5張
   store.config.imgDownloadIntervalSec = Math.max(1, Math.floor(store.config.imgConcurrency / 5))
   store.config.chapterDownloadIntervalSec = Math.min(10, Math.floor(store.config.imgConcurrency * 3))
 
@@ -111,7 +111,7 @@ async function reject() {
 }
 
 function handleDownloadClick() {
-  // 清理可能存在的旧计时器
+  // 清理可能存在的舊計時器
   if (countdownInterval.value) {
     clearInterval(countdownInterval.value)
   }
@@ -129,26 +129,26 @@ function handleDownloadClick() {
 <template>
   <n-popconfirm :positive-text="null" :negative-text="null" v-model:show="popConfirmShowing">
     <div class="flex flex-col">
-      <div>下载整个收藏夹是个大任务</div>
-      <div>为了减轻禁漫服务器压力</div>
-      <div>将自动调整配置中的下载间隔</div>
+      <div>下載整個收藏夾是個大任務</div>
+      <div>為了減輕禁漫伺服器壓力</div>
+      <div>將自動調整配置中的下載間隔</div>
       <div>
-        <span>之后你随时可以在右上角的</span>
+        <span>之后你隨時可以在右上角的</span>
         <span class="bg-gray-2 px-1">配置</span>
-        <span>调整</span>
+        <span>調整</span>
       </div>
     </div>
 
     <template #action>
       <n-button size="small" :disabled="rejectButtonDisabled" @click="reject">
-        <span v-if="rejectButtonDisabled">不调整直接下载 ({{ rejectCooldown }})</span>
-        <span v-else>不调整直接下载</span>
+        <span v-if="rejectButtonDisabled">不調整直接下載 ({{ rejectCooldown }})</span>
+        <span v-else>不調整直接下載</span>
       </n-button>
-      <n-button size="small" type="primary" @click="agree">调整并下载</n-button>
+      <n-button size="small" type="primary" @click="agree">調整并下載</n-button>
     </template>
 
     <template #trigger>
-      <n-button type="primary" size="small" @click="handleDownloadClick">下载整个收藏夹</n-button>
+      <n-button type="primary" size="small" @click="handleDownloadClick">下載整個收藏夾</n-button>
     </template>
   </n-popconfirm>
 </template>

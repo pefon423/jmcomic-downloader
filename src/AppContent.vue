@@ -40,13 +40,13 @@ watch(
 )
 
 onMounted(async () => {
-  // 屏蔽浏览器右键菜单
+  // 屏蔽瀏覽器右鍵菜單
   document.oncontextmenu = (event) => {
     event.preventDefault()
   }
-  // 获取配置
+  // 獲取配置
   store.config = await commands.getConfig()
-  // 如果username和password不为空，尝试登录
+  // 如果username和password不為空，嘗試登入
   if (store.config.username !== '' && store.config.password !== '') {
     const result = await commands.login(store.config.username, store.config.password)
     if (result.status === 'error') {
@@ -54,7 +54,7 @@ onMounted(async () => {
       return
     }
     store.userProfile = result.data
-    message.success('自动登录成功')
+    message.success('自動登入成功')
   }
 })
 </script>
@@ -62,19 +62,19 @@ onMounted(async () => {
 <template>
   <div v-if="store.config !== undefined" class="h-screen flex overflow-hidden">
     <n-tabs class="h-full w-1/2" v-model:value="store.currentTabName" type="line" size="small" animated>
-      <n-tab-pane class="h-full overflow-auto p-0!" name="search" tab="搜索" display-directive="show">
+      <n-tab-pane class="h-full overflow-auto p-0!" name="search" tab="搜尋" display-directive="show">
         <SearchPane />
       </n-tab-pane>
-      <n-tab-pane class="h-full overflow-auto p-0!" name="favorite" tab="收藏夹" display-directive="show">
+      <n-tab-pane class="h-full overflow-auto p-0!" name="favorite" tab="收藏夾" display-directive="show">
         <FavoritePane />
       </n-tab-pane>
-      <n-tab-pane class="h-full overflow-auto p-0!" name="weekly" tab="每周必看" display-directive="show">
+      <n-tab-pane class="h-full overflow-auto p-0!" name="weekly" tab="每週必看" display-directive="show">
         <WeeklyPane />
       </n-tab-pane>
-      <n-tab-pane class="h-full overflow-auto p-0!" name="downloaded" tab="本地库存" display-directive="show">
+      <n-tab-pane class="h-full overflow-auto p-0!" name="downloaded" tab="本地庫存" display-directive="show">
         <DownloadedPane />
       </n-tab-pane>
-      <n-tab-pane class="h-full overflow-auto p-0!" name="chapter" tab="章节详情" display-directive="show">
+      <n-tab-pane class="h-full overflow-auto p-0!" name="chapter" tab="章節詳情" display-directive="show">
         <ChapterPane />
       </n-tab-pane>
     </n-tabs>
@@ -86,7 +86,7 @@ onMounted(async () => {
               <PhUser />
             </n-icon>
           </template>
-          登录
+          登入
         </n-button>
         <n-button @click="logViewerShowing = true">
           <template #icon>
@@ -94,7 +94,7 @@ onMounted(async () => {
               <PhClockCounterClockwise />
             </n-icon>
           </template>
-          日志
+          日誌
         </n-button>
         <n-button @click="aboutDialogShowing = true">
           <template #icon>
@@ -102,7 +102,7 @@ onMounted(async () => {
               <PhInfo />
             </n-icon>
           </template>
-          关于
+          關於
         </n-button>
         <div v-if="store.userProfile !== undefined" class="flex items-center ml-auto overflow-hidden">
           <n-avatar
@@ -137,3 +137,4 @@ onMounted(async () => {
   @apply px-2;
 }
 </style>
+t

@@ -19,23 +19,23 @@ onMounted(async () => {
         <img :src="icon" alt="icon" class="w-32 h-32" />
         <div class="text-center text-gray-400 text-xs">
           <div>
-            如果本项目对你有帮助，欢迎来
+            如果本項目對你有幫助，歡迎來
             <n-a href="https://github.com/lanyeeee/jmcomic-downloader" target="_blank">GitHub</n-a>
-            点个Star⭐支持！
+            點個Star⭐支持！
           </div>
-          <div class="mt-1">你的支持是我持续更新维护的动力🙏</div>
+          <div class="mt-1">你的支持是我持續更新維護的動力🙏</div>
         </div>
         <div class="flex flex-col w-full gap-row-3 px-6">
           <div class="flex items-center justify-between py-2 px-4 bg-gray-100 rounded-lg">
-            <span class="text-gray-500">软件版本</span>
+            <span class="text-gray-500">軟體版本</span>
             <div class="font-medium">v{{ version }}</div>
           </div>
           <div class="flex items-center justify-between py-2 px-4 bg-gray-100 rounded-lg">
-            <span class="text-gray-500">开源地址</span>
+            <span class="text-gray-500">開源地址</span>
             <n-a href="https://github.com/lanyeeee/jmcomic-downloader" target="_blank">GitHub</n-a>
           </div>
           <div class="flex items-center justify-between py-2 px-4 bg-gray-100 rounded-lg">
-            <span class="text-gray-500">问题反馈</span>
+            <span class="text-gray-500">問題反饋</span>
             <n-a href="https://github.com/lanyeeee/jmcomic-downloader/issues" target="_blank">GitHub Issues</n-a>
           </div>
         </div>
@@ -54,3 +54,4 @@ onMounted(async () => {
     </n-dialog>
   </n-modal>
 </template>
+抧

@@ -11,8 +11,8 @@ const store = useStore()
 const message = useMessage()
 
 const sortOptions: SelectProps['options'] = [
-  { label: '收藏时间', value: 'FavoriteTime' },
-  { label: '更新时间', value: 'UpdateTime' },
+  { label: '收藏時間', value: 'FavoriteTime' },
+  { label: '更新時間', value: 'UpdateTime' },
 ]
 
 const sortSelected = ref<FavoriteSort>('FavoriteTime')
@@ -67,7 +67,7 @@ async function syncFavoriteFolder() {
     return
   }
   await getFavourite(0, 1, 'FavoriteTime')
-  message.success('收藏夹已同步')
+  message.success('收藏夾已同步')
 }
 </script>
 
@@ -91,16 +91,16 @@ async function syncFavoriteFolder() {
 
     <div v-if="store.getFavoriteResult !== undefined" class="flex box-border px-2 gap-2">
       <n-tooltip placement="top" trigger="hover">
-        <span>已弃用，请改用</span>
-        <span class="bg-gray-2/30 px-1 rounded">本地库存</span>
+        <span>已棄用，請改用</span>
+        <span class="bg-gray-2/30 px-1 rounded">本地庫存</span>
         <span>中的</span>
-        <span class="bg-gray-2/30 px-1 rounded">更新库存</span>
-        <span>按钮</span>
+        <span class="bg-gray-2/30 px-1 rounded">更新庫存</span>
+        <span>按鈕</span>
         <template #trigger>
-          <n-button disabled class="ml-auto" size="small">更新漫画</n-button>
+          <n-button disabled class="ml-auto" size="small">更新漫畫</n-button>
         </template>
       </n-tooltip>
-      <n-button size="small" type="primary" secondary @click="syncFavoriteFolder">收藏不对点我</n-button>
+      <n-button size="small" type="primary" secondary @click="syncFavoriteFolder">收藏不對點我</n-button>
     </div>
 
     <div v-if="store.getFavoriteResult !== undefined" class="flex flex-col gap-row-2 overflow-auto box-border px-2">
@@ -123,3 +123,4 @@ async function syncFavoriteFolder() {
       @update:page="getFavourite(folderIdSelected, $event, sortSelected)" />
   </div>
 </template>
+ 

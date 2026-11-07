@@ -30,19 +30,20 @@ async function showConfigInFileManager() {
     <n-dialog class="w-140!" :showIcon="false" content-style="" @close="showing = false">
       <div class="flex flex-col gap-row-2">
         <n-tabs class="h-full" v-model:value="currentTabName" type="line" size="small" animated>
-          <n-tab-pane name="download_settings" tab="下载相关">
+          <n-tab-pane name="download_settings" tab="下載相關">
             <DownloadSettings />
           </n-tab-pane>
-          <n-tab-pane name="network_settings" tab="网络相关">
+          <n-tab-pane name="network_settings" tab="網路相關">
             <NetworkSettings />
           </n-tab-pane>
-          <n-tab-pane name="export_settings" tab="导出相关">
+          <n-tab-pane name="export_settings" tab="導出相關">
             <ExportSettings />
           </n-tab-pane>
         </n-tabs>
 
-        <n-button class="ml-auto mt-2" size="small" @click="showConfigInFileManager">打开配置目录</n-button>
+        <n-button class="ml-auto mt-2" size="small" @click="showConfigInFileManager">打開配置目錄</n-button>
       </div>
     </n-dialog>
   </n-modal>
 </template>
+

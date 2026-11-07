@@ -586,7 +586,8 @@ pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
     {
         let path = entry.path();
 
-        if !entry.is_comic_metadata() {
+        // 除了漫画元数据文件，也要看zip(整个漫画可能被打包成了zip)
+        if !entry.is_comic_metadata() && !entry.is_zip() {
             continue;
         }
 
@@ -625,13 +626,23 @@ pub fn get_downloaded_comics(app: AppHandle) -> Vec<Comic> {
 
     let mut downloaded_comics = Vec::new();
     for (metadata_path, _) in metadata_path_with_modify_time {
-        match Comic::from_metadata(&metadata_path) {
-            Ok(comic) => downloaded_comics.push(comic),
-            Err(err) => {
+        let is_zip = metadata_path
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("zip"));
+        let comic_result = if is_zip {
+            // 只有章节的zip里没有漫画元数据，返回None，直接跳过
+            Comic::from_zip(&metadata_path).transpose()
+        } else {
+            Some(Comic::from_metadata(&metadata_path))
+        };
+        match comic_result {
+            Some(Ok(comic)) => downloaded_comics.push(comic),
+            Some(Err(err)) => {
                 let err_title = "获取已下载漫画的过程中遇到错误，已跳过";
                 let message = err.to_message();
                 tracing::error!(err_title, message);
             }
+            None => {}
         }
     }
     // 按照漫画ID分组，以方便去重

@@ -169,6 +169,68 @@ impl Comic {
         Ok(comic)
     }
 
+    /// 从整个漫画打包成的zip中读取漫画，zip里没有漫画元数据时返回`None`
+    #[instrument(level = "error", skip_all, fields(zip_path = %zip_path.display()))]
+    pub fn from_zip(zip_path: &Path) -> eyre::Result<Option<Comic>> {
+        use std::io::Read;
+
+        let file = std::fs::File::open(zip_path)
+            .wrap_err(format!("打开`{}`失败", zip_path.display()))?;
+        let mut archive = zip::ZipArchive::new(file).wrap_err("读取zip失败")?;
+
+        let mut comic: Option<Comic> = None;
+        let mut chapter_ids = HashSet::new();
+        for i in 0..archive.len() {
+            let mut entry = archive.by_index(i).wrap_err("读取zip条目失败")?;
+            if !entry.is_file() {
+                continue;
+            }
+
+            let entry_name = entry.name().to_string();
+            let is_chapter_metadata = entry_name.ends_with("章节元数据.json");
+            let is_comic_metadata = !is_chapter_metadata && entry_name.ends_with("元数据.json");
+            if !is_chapter_metadata && !is_comic_metadata {
+                continue;
+            }
+
+            let mut json_str = String::new();
+            entry
+                .read_to_string(&mut json_str)
+                .wrap_err(format!("读取zip中的`{entry_name}`失败"))?;
+            let json_str = json_str.trim_start_matches('\u{feff}');
+
+            if is_chapter_metadata {
+                let chapter_json: serde_json::Value = serde_json::from_str(json_str)
+                    .wrap_err(format!("解析zip中的`{entry_name}`失败"))?;
+                if let Some(chapter_id) = chapter_json
+                    .get("chapterId")
+                    .and_then(serde_json::Value::as_i64)
+                {
+                    chapter_ids.insert(chapter_id);
+                }
+            } else if comic.is_none() {
+                comic = Some(
+                    serde_json::from_str::<Comic>(json_str)
+                        .wrap_err(format!("将zip中的`{entry_name}`反序列化为Comic失败"))?,
+                );
+            }
+        }
+
+        let Some(mut comic) = comic else {
+            return Ok(None);
+        };
+
+        for chapter_info in &mut comic.chapter_infos {
+            if chapter_ids.contains(&chapter_info.chapter_id) {
+                chapter_info.is_downloaded = Some(true);
+            }
+        }
+        comic.comic_download_dir = Some(zip_path.to_path_buf());
+        comic.is_downloaded = Some(true);
+
+        Ok(Some(comic))
+    }
+
     #[instrument(level = "error", skip_all, fields(comic_id = self.id, comic_title = self.name))]
     pub fn get_comic_download_dir_name(&self) -> eyre::Result<String> {
         let comic_download_dir = self

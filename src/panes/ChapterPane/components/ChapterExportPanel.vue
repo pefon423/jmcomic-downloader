@@ -94,7 +94,7 @@ const dropdownY = ref<number>(0)
 const dropdownShowing = ref<boolean>(false)
 const dropdownOptions: DropdownOption[] = [
   {
-    label: '勾选',
+    label: '勾選',
     key: 'check',
     props: {
       onClick: () => {
@@ -104,7 +104,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '取消勾选',
+    label: '取消勾選',
     key: 'uncheck',
     props: {
       onClick: () => {
@@ -114,7 +114,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '全选',
+    label: '全選',
     key: 'check-all',
     props: {
       onClick: () => {
@@ -126,7 +126,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '取消全选',
+    label: '取消全選',
     key: 'uncheck-all',
     props: {
       onClick: () => {
@@ -261,8 +261,8 @@ const ChapterCheckbox = defineComponent({
   <div v-if="store.pickedComic !== undefined" class="flex-1 flex flex-col overflow-auto">
     <div class="flex items-center select-none pt-2 gap-1 px-2">
       <n-radio-group v-model:value="chapterPaneMode" size="small">
-        <n-radio-button value="download">下载</n-radio-button>
-        <n-radio-button value="export">导出</n-radio-button>
+        <n-radio-button value="download">下載</n-radio-button>
+        <n-radio-button value="export">導出</n-radio-button>
       </n-radio-group>
       <n-popover placement="bottom" trigger="hover" raw>
         <template #trigger>
@@ -271,21 +271,21 @@ const ChapterCheckbox = defineComponent({
         <div class="flex flex-col gap-1 text-xs leading-5 bg-white p-2 rounded-lg">
           <div class="flex items-center gap-2">
             <span class="h-3.5 w-3.5 shrink-0 rounded border border-solid border-orange bg-orange-1" />
-            <span>仅 曾导出过PDF</span>
+            <span>僅 曾導出過PDF</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="h-3.5 w-3.5 shrink-0 rounded border border-solid border-fuchsia bg-fuchsia-1" />
-            <span>仅 曾导出过CBZ</span>
+            <span>僅 曾導出過CBZ</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="h-3.5 w-3.5 shrink-0 rounded border border-solid border-indigo bg-indigo-2" />
-            <span>曾导出过PDF+CBZ</span>
+            <span>曾導出過PDF+CBZ</span>
           </div>
         </div>
       </n-popover>
       <n-button class="ml-auto" size="small" @click="props.reload">刷新</n-button>
-      <n-button size="small" type="primary" @click="exportCbz">导出cbz</n-button>
-      <n-button size="small" type="primary" @click="exportPdf">导出pdf</n-button>
+      <n-button size="small" type="primary" @click="exportCbz">導出cbz</n-button>
+      <n-button size="small" type="primary" @click="exportPdf">導出pdf</n-button>
     </div>
 
     <SelectionArea ref="selectionAreaRef" :options="selectionOptions" @move="updateSelectedIds" @start="unselectAll" />
@@ -342,3 +342,4 @@ const ChapterCheckbox = defineComponent({
   @apply bg-[rgba(46,115,252,0.5)];
 }
 </style>
+ 

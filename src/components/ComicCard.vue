@@ -63,13 +63,13 @@ async function showComicDownloadDirInFileManager() {
             {{ comicTitle }}
           </span>
           <span class="text-red">作者：{{ comicAuthor }}</span>
-          <span class="text-gray">分类：{{ comicCategory.title }} {{ comicCategorySub.title }}</span>
+          <span class="text-gray">分類：{{ comicCategory.title }} {{ comicCategorySub.title }}</span>
         </div>
         <div class="flex">
-          <IconButton v-if="comicDownloaded" title="打开下载目录" @click="showComicDownloadDirInFileManager">
+          <IconButton v-if="comicDownloaded" title="打開下載目錄" @click="showComicDownloadDirInFileManager">
             <PhFolderOpen :size="24" />
           </IconButton>
-          <IconButton class="ml-auto" title="一键下载所有章节" @click="downloadComic">
+          <IconButton class="ml-auto" title="一鍵下載所有章節" @click="downloadComic">
             <PhDownloadSimple :size="24" />
           </IconButton>
         </div>

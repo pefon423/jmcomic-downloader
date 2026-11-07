@@ -45,7 +45,7 @@ async function showComicDownloadDirInFileManager() {
   const comicDownloadDir = props.comic.comicDownloadDir
 
   if (comicDownloadDir === undefined || comicDownloadDir === null) {
-    console.error('comicDownloadDir的值为undefined或null')
+    console.error('comicDownloadDir的值為undefined或null')
     return
   }
 
@@ -77,18 +77,19 @@ async function showComicDownloadDirInFileManager() {
       </span>
       <span class="text-red">作者：{{ comic.author }}</span>
       <div class="flex mt-auto gap-col-2">
-        <IconButton title="打开下载目录" @click="showComicDownloadDirInFileManager">
+        <IconButton title="打開下載目錄" @click="showComicDownloadDirInFileManager">
           <PhFolderOpen :size="24" />
         </IconButton>
 
-        <IconButton class="ml-auto" title="导出cbz" @click="exportCbz">
+        <IconButton class="ml-auto" title="導出cbz" @click="exportCbz">
           <PhFileZip :size="24" />
         </IconButton>
 
-        <IconButton title="导出pdf" @click="exportPdf">
+        <IconButton title="導出pdf" @click="exportPdf">
           <PhFilePdf :size="24" />
         </IconButton>
       </div>
     </div>
   </div>
 </template>
+딀

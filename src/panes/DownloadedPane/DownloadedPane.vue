@@ -23,22 +23,22 @@ const { dropdownX, dropdownY, dropdownShowing, dropdownOptions, showDropdown } =
 const selectionAreaRef = useTemplateRef('selectionAreaRef')
 
 const PAGE_SIZE = 20
-// 当前页码
+// 當前頁碼
 const currentPage = ref<number>(1)
-// 总页数
+// 總頁數
 const pageCount = computed<number>(() => {
   if (store.downloadedComics.length === 0) {
     return 1
   }
   return Math.ceil(store.downloadedComics.length / PAGE_SIZE)
 })
-// 当前页的漫画
+// 當前頁的漫畫
 const currentPageComics = computed<Comic[]>(() => {
   const start = (currentPage.value - 1) * PAGE_SIZE
   const end = start + PAGE_SIZE
   return store.downloadedComics.slice(start, end)
 })
-// 确保当前页码不超过总页数
+// 確保當前頁碼不超過總頁數
 watchEffect(() => {
   if (currentPage.value > pageCount.value) {
     currentPage.value = pageCount.value
@@ -52,7 +52,7 @@ watch(currentPage, () => {
   selectionAreaRef.value?.$el.scrollTo({ top: 0, behavior: 'instant' })
 })
 
-// 监听标签页变化，更新下载的漫画列表
+// 監聽標簽頁變化，更新下載的漫畫列表
 watch(
   () => store.currentTabName,
   async () => {
@@ -170,7 +170,7 @@ function useDropdown() {
   const dropdownShowing = ref<boolean>(false)
   const dropdownOptions: DropdownOption[] = [
     {
-      label: '勾选',
+      label: '勾選',
       key: 'check',
       icon: () => (
         <NIcon size="20">
@@ -185,7 +185,7 @@ function useDropdown() {
       },
     },
     {
-      label: '取消勾选',
+      label: '取消勾選',
       key: 'uncheck',
       icon: () => (
         <NIcon size="20">
@@ -200,7 +200,7 @@ function useDropdown() {
       },
     },
     {
-      label: '全选',
+      label: '全選',
       key: 'select-all',
       icon: () => (
         <NIcon size="20">
@@ -238,7 +238,7 @@ function useDropdown() {
   <div v-if="store.config !== undefined" class="h-full flex flex-col">
     <div class="flex gap-1 box-border px-2 pt-2">
       <n-input-group>
-        <n-input-group-label size="small">导出目录</n-input-group-label>
+        <n-input-group-label size="small">導出目錄</n-input-group-label>
         <n-input v-model:value="store.config.exportDir" size="small" readonly @click="selectExportDir" />
         <n-button class="w-10" size="small" @click="showExportDirInFileManager">
           <template #icon>
@@ -252,11 +252,11 @@ function useDropdown() {
     </div>
     <div class="flex gap-2 items-center px-2 select-none">
       <div class="animate-pulse text-sm text-red flex flex-col">
-        <div>左键拖动进行框选，右键打开菜单</div>
-        <div>右边的按钮作用于勾选项</div>
+        <div>左鍵拖動進行框選，右鍵打開菜單</div>
+        <div>右邊的按鈕作用于勾選項</div>
       </div>
-      <n-button class="ml-auto" type="primary" size="small" @click="exportCbz">导出cbz</n-button>
-      <n-button type="primary" size="small" @click="exportPdf">导出pdf</n-button>
+      <n-button class="ml-auto" type="primary" size="small" @click="exportCbz">導出cbz</n-button>
+      <n-button type="primary" size="small" @click="exportPdf">導出pdf</n-button>
     </div>
     <SelectionArea ref="selectionAreaRef" :options="selectionOptions" @move="updateSelectedIds" @start="unselectAll" />
     <div
@@ -299,3 +299,4 @@ function useDropdown() {
   @apply bg-[rgb(204,232,255)];
 }
 </style>
+ 

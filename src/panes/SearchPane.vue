@@ -13,9 +13,9 @@ const message = useMessage()
 
 const sortOptions: SelectProps['options'] = [
   { label: '最新', value: 'Latest' },
-  { label: '最多点击', value: 'View' },
-  { label: '最多图片', value: 'Picture' },
-  { label: '最多爱心', value: 'Like' },
+  { label: '最多點擊', value: 'View' },
+  { label: '最多圖片', value: 'Picture' },
+  { label: '最多愛心', value: 'Like' },
 ]
 
 const searchInput = ref<string>('')
@@ -34,7 +34,7 @@ const searchPageCount = computed(() => {
 
 async function search(keyword: string, page: number, sort: SearchSort) {
   if (searching.value) {
-    message.warning('有搜索正在进行，请稍后再试')
+    message.warning('有搜尋正在進行，請稍后再試')
     return
   }
 
@@ -52,7 +52,7 @@ async function search(keyword: string, page: number, sort: SearchSort) {
   if ('SearchResult' in searchResultVariant) {
     const respData = searchResultVariant.SearchResult
     if (respData.content.length === 0) {
-      message.warning('什么都没有搜到，请尝试其他关键词')
+      message.warning('什么都沒有搜到，請嘗試其他關鍵詞')
       searching.value = false
       return
     }
@@ -73,7 +73,7 @@ async function search(keyword: string, page: number, sort: SearchSort) {
   <div class="h-full flex flex-col gap-2">
     <n-input-group class="box-border px-2 pt-2">
       <FloatLabelInput
-        label="关键词(jm号也可以)"
+        label="關鍵詞(jm號也可以)"
         size="small"
         v-model:value="searchInput"
         clearable
@@ -120,3 +120,4 @@ async function search(keyword: string, page: number, sort: SearchSort) {
       @update:page="search(searchInput.trim(), $event, sortSelected)" />
   </div>
 </template>
+啓

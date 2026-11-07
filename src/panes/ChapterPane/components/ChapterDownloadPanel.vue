@@ -91,7 +91,7 @@ const dropdownY = ref<number>(0)
 const dropdownShowing = ref<boolean>(false)
 const dropdownOptions: DropdownOption[] = [
   {
-    label: '勾选',
+    label: '勾選',
     key: 'check',
     props: {
       onClick: () => {
@@ -101,7 +101,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '取消勾选',
+    label: '取消勾選',
     key: 'uncheck',
     props: {
       onClick: () => {
@@ -111,7 +111,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '全选',
+    label: '全選',
     key: 'check-all',
     props: {
       onClick: () => {
@@ -123,7 +123,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '取消全选',
+    label: '取消全選',
     key: 'uncheck-all',
     props: {
       onClick: () => {
@@ -215,11 +215,11 @@ const ChapterCheckbox = defineComponent({
   <div v-if="store.pickedComic !== undefined" class="flex-1 flex flex-col overflow-auto">
     <div class="flex items-center select-none pt-2 gap-1 px-2">
       <n-radio-group v-model:value="chapterPaneMode" size="small">
-        <n-radio-button value="download">下载</n-radio-button>
-        <n-radio-button value="export">导出</n-radio-button>
+        <n-radio-button value="download">下載</n-radio-button>
+        <n-radio-button value="export">導出</n-radio-button>
       </n-radio-group>
       <n-button class="ml-auto" size="small" @click="props.reload">刷新</n-button>
-      <n-button size="small" type="primary" @click="downloadCheckedChapters">下载勾选章节</n-button>
+      <n-button size="small" type="primary" @click="downloadCheckedChapters">下載勾選章節</n-button>
     </div>
 
     <SelectionArea ref="selectionAreaRef" :options="selectionOptions" @move="updateSelectedIds" @start="unselectAll" />
@@ -268,3 +268,4 @@ const ChapterCheckbox = defineComponent({
   @apply bg-[rgba(46,115,252,0.5)];
 }
 </style>
+n

@@ -42,7 +42,7 @@ async function showComicDownloadDirInFileManager() {
 
   const comicDownloadDir = store.pickedComic.comicDownloadDir
   if (comicDownloadDir === undefined || comicDownloadDir === null) {
-    console.error('comicDownloadDir的值为undefined或null')
+    console.error('comicDownloadDir的值為undefined或null')
     return
   }
 
@@ -55,7 +55,7 @@ async function showComicDownloadDirInFileManager() {
 
 <template>
   <div class="h-full flex flex-col box-border">
-    <n-empty v-if="store.pickedComic === undefined" description="请先选择漫画(搜索、收藏夹、每周必看、本地库存)" />
+    <n-empty v-if="store.pickedComic === undefined" description="請先選擇漫畫(搜尋、收藏夾、每週必看、本地庫存)" />
     <template v-else>
       <ChapterDownloadPanel
         v-if="chapterPaneMode === 'download'"
@@ -72,11 +72,11 @@ async function showComicDownloadDirInFileManager() {
         <div class="flex flex-col w-full">
           <span class="font-bold text-lg line-clamp-2">{{ store.pickedComic.name }}</span>
           <span class="text-red">作者：{{ store.pickedComic.author }}</span>
-          <span class="text-gray">标签：{{ store.pickedComic.tags }}</span>
+          <span class="text-gray">標簽：{{ store.pickedComic.tags }}</span>
           <IconButton
             v-if="store.pickedComic.isDownloaded"
             class="mt-auto mr-auto"
-            title="打开下载目录"
+            title="打開下載目錄"
             @click="showComicDownloadDirInFileManager">
             <PhFolderOpen :size="24" />
           </IconButton>

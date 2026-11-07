@@ -33,7 +33,7 @@ const uncompletedProgresses = computed<[number, ProgressData][]>(() =>
 )
 
 watchEffect(() => {
-  // 只保留未完成的章节id
+  // 只保留未完成的章節id
   const uncompletedIds = new Set(uncompletedProgresses.value.map(([chapterId]) => chapterId))
   for (const id of selectedIds.value) {
     if (!uncompletedIds.has(id)) {
@@ -70,7 +70,7 @@ const dropdownY = ref<number>(0)
 const dropdownShowing = ref<boolean>(false)
 const dropdownOptions: DropdownOption[] = [
   {
-    label: '全选',
+    label: '全選',
     key: 'select-all',
     icon: () => (
       <NIcon size="20">
@@ -94,7 +94,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '继续',
+    label: '繼續',
     key: 'resume',
     icon: () => (
       <NIcon size="20">
@@ -114,7 +114,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '暂停',
+    label: '暫停',
     key: 'pause',
     icon: () => (
       <NIcon size="20">
@@ -143,7 +143,7 @@ const dropdownOptions: DropdownOption[] = [
     },
   },
   {
-    label: '删除',
+    label: '刪除',
     key: 'cancel',
     icon: () => (
       <NIcon size="20">
@@ -293,7 +293,7 @@ const UncompletedProgress = defineComponent({
 <template>
   <div class="uncompleted-progresses-selection-container h-full flex flex-col px-2" @contextmenu="showDropdown">
     <SelectionArea ref="selectionAreaRef" :options="selectionOptions" @move="updateSelectedIds" @start="unselectAll" />
-    <span class="ml-auto select-none">左键拖动进行框选，右键打开菜单，双击暂停/继续</span>
+    <span class="ml-auto select-none">左鍵拖動進行框選，右鍵打開菜單，雙擊暫停/繼續</span>
     <div class="h-full select-none">
       <UncompletedProgress
         ref="selectableRefs"
@@ -326,3 +326,4 @@ const UncompletedProgress = defineComponent({
   @apply bg-[rgba(46,115,252,0.5)];
 }
 </style>
+e

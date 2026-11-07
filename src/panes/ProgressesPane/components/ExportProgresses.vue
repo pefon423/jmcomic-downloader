@@ -34,7 +34,7 @@ const { dropdownX, dropdownY, dropdownShowing, dropdownOptions, showDropdown } =
 const progresses = ref<Map<string, ProgressData>>(new Map())
 
 watchEffect(() => {
-  // 保证selectedIds中的uuid在progresses中存在
+  // 保證selectedIds中的uuid在progresses中存在
   const uuids = new Set(progresses.value.keys())
   for (const uuid of selectedIds.value) {
     if (!uuids.has(uuid)) {
@@ -85,7 +85,7 @@ onMounted(() => {
           current: 0,
           total,
           percentage: 0,
-          indicator: 'CBZ创建中',
+          indicator: 'CBZ創建中',
         })
       } else if (exportEvent.event === 'Progress') {
         const { uuid, current } = exportEvent.data
@@ -94,14 +94,14 @@ onMounted(() => {
           progressData.state = 'Processing'
           progressData.current = current
           progressData.percentage = progressData.total === 0 ? 100 : (current / progressData.total) * 100
-          progressData.indicator = `CBZ创建中 ${current}/${progressData.total}`
+          progressData.indicator = `CBZ創建中 ${current}/${progressData.total}`
         }
       } else if (exportEvent.event === 'Error') {
         const { uuid } = exportEvent.data
         const progressData = progresses.value.get(uuid)
         if (progressData !== undefined) {
           progressData.state = 'Error'
-          progressData.indicator = 'CBZ创建失败'
+          progressData.indicator = 'CBZ創建失敗'
         }
       } else if (exportEvent.event === 'End') {
         const { uuid, comicId, chapterExportDir } = exportEvent.data
@@ -112,7 +112,7 @@ onMounted(() => {
           progressData.percentage = 100
           progressData.chapterExportDir = chapterExportDir
           progressData.comicId = comicId
-          progressData.indicator = 'CBZ创建完成'
+          progressData.indicator = 'CBZ創建完成'
         }
         await syncPickedAndDownloadedComic(comicId)
       }
@@ -133,7 +133,7 @@ onMounted(() => {
           current: 0,
           total,
           percentage: 0,
-          indicator: 'PDF创建中',
+          indicator: 'PDF創建中',
         })
       } else if (exportEvent.event === 'CreateProgress') {
         const { uuid, current } = exportEvent.data
@@ -142,14 +142,14 @@ onMounted(() => {
           progressData.state = 'Processing'
           progressData.current = current
           progressData.percentage = progressData.total === 0 ? 100 : (current / progressData.total) * 100
-          progressData.indicator = `PDF创建中 ${current}/${progressData.total}`
+          progressData.indicator = `PDF創建中 ${current}/${progressData.total}`
         }
       } else if (exportEvent.event === 'CreateError') {
         const { uuid } = exportEvent.data
         const progressData = progresses.value.get(uuid)
         if (progressData !== undefined) {
           progressData.state = 'Error'
-          progressData.indicator = '创建PDF失败'
+          progressData.indicator = '創建PDF失敗'
         }
       } else if (exportEvent.event === 'CreateEnd') {
         const { uuid, comicId, chapterExportDir } = exportEvent.data
@@ -160,7 +160,7 @@ onMounted(() => {
           progressData.percentage = 100
           progressData.chapterExportDir = chapterExportDir
           progressData.comicId = comicId
-          progressData.indicator = 'PDF创建完成'
+          progressData.indicator = 'PDF創建完成'
         }
         await syncPickedAndDownloadedComic(comicId)
       } else if (exportEvent.event === 'MergeStart') {
@@ -189,7 +189,7 @@ onMounted(() => {
         const progressData = progresses.value.get(uuid)
         if (progressData !== undefined) {
           progressData.state = 'Error'
-          progressData.indicator = 'PDF合并失败'
+          progressData.indicator = 'PDF合并失敗'
         }
       } else if (exportEvent.event === 'MergeEnd') {
         const { uuid, comicId, chapterExportDir } = exportEvent.data
@@ -243,7 +243,7 @@ function useDropdown() {
   const dropdownShowing = ref<boolean>(false)
   const dropdownOptions: DropdownOption[] = [
     {
-      label: '全选',
+      label: '全選',
       key: 'check-all',
       icon: () => (
         <NIcon size="20">
@@ -262,7 +262,7 @@ function useDropdown() {
       },
     },
     {
-      label: '删除',
+      label: '刪除',
       key: 'delete',
       icon: () => (
         <NIcon size="20">
@@ -365,7 +365,7 @@ const ExportProgress = defineComponent({
           </div>
         )}
         {props.p.chapterExportDir !== undefined && (
-          <IconButton class="ml-auto" title="打开导出目录" onClick={showChapterExportDirInFileManager}>
+          <IconButton class="ml-auto" title="打開導出目錄" onClick={showChapterExportDirInFileManager}>
             <PhFolderOpen size={24} />
           </IconButton>
         )}
@@ -380,7 +380,7 @@ const ExportProgress = defineComponent({
     <SelectionArea :options="selectionOptions" @move="updateSelectedIds" @start="unselectAll" />
     <div class="flex flex-col">
       <div class="flex">
-        <span class="ml-auto animate-pulse text-red">左键拖动进行框选，右键打开菜单</span>
+        <span class="ml-auto animate-pulse text-red">左鍵拖動進行框選，右鍵打開菜單</span>
       </div>
 
       <ExportProgress v-for="[uuid, p] in progresses" :key="uuid" :p="p" :uuid="uuid" />
@@ -406,3 +406,4 @@ const ExportProgress = defineComponent({
   @apply bg-[rgb(204,232,255)];
 }
 </style>
+ 

@@ -10,83 +10,83 @@ const message = useMessage()
 const dirFmt = ref<string>(store.config?.dirFmt ?? '')
 
 watch([() => store.config?.apiDomainMode, () => store.config?.customApiDomain], () => {
-  message.warning('切换线路后可能需要重新登录')
+  message.warning('切換線路后可能需要重新登入')
 })
 </script>
 
 <template>
   <div v-if="store.config !== undefined" class="flex flex-col">
-    <span class="font-bold mt-2">下载格式</span>
+    <span class="font-bold mt-2">下載格式</span>
     <n-radio-group v-model:value="store.config.downloadFormat">
       <n-tooltip placement="top" trigger="hover">
         <template #trigger>
           <n-radio value="Jpeg">jpg</n-radio>
         </template>
-        1. 有损
+        1. 有損
         <span class="text-red">(肉眼看不出)</span>
         <br />
-        2. 文件体积小
+        2. 檔案體積小
         <br />
-        4. 宽高的上限为65534
-        <span class="text-red">(某些条漫可能会超过这个上限导致报错)</span>
+        4. 寬高的上限為65534
+        <span class="text-red">(某些條漫可能會超過這個上限導致報錯)</span>
         <br />
-        3. 编码速度最快
+        3. 編碼速度最快
         <br />
       </n-tooltip>
       <n-tooltip placement="top" trigger="hover">
         <template #trigger>
           <n-radio value="Png">png</n-radio>
         </template>
-        1. 无损
+        1. 無損
         <br />
-        2. 文件体积大
-        <span class="text-red">(约为jpg的5倍)</span>
+        2. 檔案體積大
+        <span class="text-red">(約為jpg的5倍)</span>
         <br />
-        3. 编码速度最慢
+        3. 編碼速度最慢
         <br />
       </n-tooltip>
       <n-tooltip placement="top" trigger="hover">
         <template #trigger>
           <n-radio value="Webp">webp</n-radio>
         </template>
-        1. 无损
+        1. 無損
         <br />
-        2. 文件体积大
-        <span class="text-red">(约为jpg的4倍)</span>
+        2. 檔案體積大
+        <span class="text-red">(約為jpg的4倍)</span>
         <br />
-        3. 宽高的上限为16383
-        <span class="text-red">(某些条漫可能会超过这个上限导致报错)</span>
+        3. 寬高的上限為16383
+        <span class="text-red">(某些條漫可能會超過這個上限導致報錯)</span>
         <br />
-        4. 编码速度较慢
+        4. 編碼速度較慢
         <br />
       </n-tooltip>
     </n-radio-group>
 
-    <span class="font-bold mt-2">下载目录格式</span>
+    <span class="font-bold mt-2">下載目錄格式</span>
     <n-tooltip placement="top" trigger="hover" :width="550">
       <div>
         可以用斜杠
         <span class="rounded bg-gray-500 px-1 text-white">/</span>
-        来分隔目录层级
+        來分隔目錄層級
       </div>
-      <div class="text-orange">至少要有两个层级，最后一层存放章节元数据，倒数第二层存放漫画元数据</div>
+      <div class="text-orange">至少要有兩個層級，最后一層存放章節元數據，倒數第二層存放漫畫元數據</div>
       <div class="font-semibold mt-2">可用字段：</div>
       <div class="grid grid-cols-2">
         <div>
           <span class="rounded bg-gray-500 px-1">comic_id</span>
-          <span class="ml-2">漫画ID</span>
+          <span class="ml-2">漫畫ID</span>
         </div>
         <div>
           <span class="rounded bg-gray-500 px-1">chapter_id</span>
-          <span class="ml-2">章节ID</span>
+          <span class="ml-2">章節ID</span>
         </div>
         <div>
           <span class="rounded bg-gray-500 px-1">comic_title</span>
-          <span class="ml-2">漫画标题</span>
+          <span class="ml-2">漫畫標題</span>
         </div>
         <div>
           <span class="rounded bg-gray-500 px-1">chapter_title</span>
-          <span class="ml-2">章节标题</span>
+          <span class="ml-2">章節標題</span>
         </div>
         <div>
           <span class="rounded bg-gray-500 px-1">author</span>
@@ -94,20 +94,20 @@ watch([() => store.config?.apiDomainMode, () => store.config?.customApiDomain], 
         </div>
         <div>
           <span class="rounded bg-gray-500 px-1">order</span>
-          <span class="ml-2">章节在漫画里对应的序号</span>
+          <span class="ml-2">章節在漫畫里對應的序號</span>
         </div>
       </div>
       <div class="font-semibold mt-2">例如格式</div>
       <div class="bg-gray-200 rounded-md p-1 text-black w-fit">
         {author}/[{author}] {comic_title}({comic_id})/{order} - {chapter_title}
       </div>
-      <div class="font-semibold">下载《蓦然回首》第1话会产生三层文件夹，分别是</div>
+      <div class="font-semibold">下載《驀然回首》第1話會產生三層資料夾，分別是</div>
       <div class="flex gap-1 text-black">
-        <span class="bg-gray-200 rounded-md px-2 w-fit">藤本树, 藤本タツキ</span>
+        <span class="bg-gray-200 rounded-md px-2 w-fit">藤本樹, 藤本タツキ</span>
         <span class="rounded bg-gray-500 px-1 text-white">/</span>
-        <span class="bg-gray-200 rounded-md px-2 w-fit">[藤本树, 藤本タツキ] 蓦然回首(384524)</span>
+        <span class="bg-gray-200 rounded-md px-2 w-fit">[藤本樹, 藤本タツキ] 驀然回首(384524)</span>
         <span class="rounded bg-gray-500 px-1 text-white">/</span>
-        <span class="bg-gray-200 rounded-md px-2 w-fit">1 - 第1话</span>
+        <span class="bg-gray-200 rounded-md px-2 w-fit">1 - 第1話</span>
       </div>
       <template #trigger>
         <n-input
@@ -119,16 +119,16 @@ watch([() => store.config?.apiDomainMode, () => store.config?.customApiDomain], 
     </n-tooltip>
 
     <span class="font-bold mt-2">其他</span>
-    <n-checkbox class="w-fit" v-model:checked="store.config.shouldDownloadCover">下载封面</n-checkbox>
+    <n-checkbox class="w-fit" v-model:checked="store.config.shouldDownloadCover">下載封面</n-checkbox>
     <n-tooltip placement="top" trigger="hover">
       <template #trigger>
-        <n-checkbox class="w-fit" v-model:checked="store.config.zipAfterDownload">下载后转成zip并删除目录</n-checkbox>
+        <n-checkbox class="w-fit" v-model:checked="store.config.zipAfterDownload">下載后轉成zip并刪除目錄</n-checkbox>
       </template>
-      每个章节下载完成后，将章节目录打包成同名zip，并删除原目录
+      每個章節下載完成后，將章節目錄打包成同名zip，并刪除原目錄
       <br />
-      更新库存时，zip中的章节同样会被识别为已下载
+      更新庫存時，zip中的章節同樣會被識別為已下載
       <br />
-      <span class="text-red">已转成zip的章节暂时无法导出PDF/CBZ</span>
+      <span class="text-red">已轉成zip的章節暫時無法導出PDF/CBZ</span>
     </n-tooltip>
   </div>
 </template>

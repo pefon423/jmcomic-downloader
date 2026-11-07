@@ -26,7 +26,7 @@ onMounted(async () => {
       } else if (event === 'Sleeping') {
         const progressData = store.progresses.get(data.chapterId)
         if (progressData !== undefined) {
-          progressData.indicator = `将在${data.remainingSec}秒后继续下载`
+          progressData.indicator = `將在${data.remainingSec}秒后繼續下載`
         }
       } else if (event === 'TaskCreate') {
         const { chapterInfo, downloadedImgCount, totalImgCount } = data
@@ -34,7 +34,7 @@ onMounted(async () => {
         store.progresses.set(chapterInfo.chapterId, {
           ...data,
           percentage: 0,
-          indicator: `排队中 ${downloadedImgCount}/${totalImgCount}`,
+          indicator: `排隊中 ${downloadedImgCount}/${totalImgCount}`,
         })
       } else if (event === 'TaskUpdate') {
         const { chapterId, state, downloadedImgCount, totalImgCount } = data
@@ -60,15 +60,15 @@ onMounted(async () => {
 
         let indicator = ''
         if (state === 'Pending') {
-          indicator = `排队中`
+          indicator = `排隊中`
         } else if (state === 'Downloading') {
-          indicator = `下载中`
+          indicator = `下載中`
         } else if (state === 'Paused') {
-          indicator = `已暂停`
+          indicator = `已暫停`
         } else if (state === 'Completed') {
-          indicator = `下载完成`
+          indicator = `下載完成`
         } else if (state === 'Failed') {
-          indicator = `下载失败`
+          indicator = `下載失敗`
         }
         if (totalImgCount !== 0) {
           indicator += ` ${downloadedImgCount}/${totalImgCount}`
@@ -176,7 +176,7 @@ async function selectDownloadDir() {
   <div v-if="store.config !== undefined" class="flex flex-col flex-1 overflow-auto">
     <div class="flex gap-1 box-border px-2 pt-2.5">
       <n-input-group class="">
-        <n-input-group-label size="small">下载目录</n-input-group-label>
+        <n-input-group-label size="small">下載目錄</n-input-group-label>
         <n-input v-model:value="store.config.downloadDir" size="small" readonly @click="selectDownloadDir" />
         <n-button class="w-10" size="small" @click="showDownloadDirInFileManager">
           <template #icon>
@@ -202,7 +202,7 @@ async function selectDownloadDir() {
       <n-tab-pane class="h-full p-0! overflow-auto" name="completed" tab="已完成">
         <CompletedProgresses />
       </n-tab-pane>
-      <n-tab-pane class="h-full p-0! overflow-auto" name="export" tab="导出进度" display-directive="show">
+      <n-tab-pane class="h-full p-0! overflow-auto" name="export" tab="導出進度" display-directive="show">
         <ExportProgresses />
       </n-tab-pane>
 
@@ -213,3 +213,4 @@ async function selectDownloadDir() {
     <SettingsDialog v-model:showing="settingsDialogShowing" />
   </div>
 </template>
+s

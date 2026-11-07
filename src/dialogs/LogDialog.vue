@@ -90,12 +90,12 @@ const formatedLogsDirSize = computed<string>(() => {
     unitIndex++
   }
 
-  // 保留两位小数
+  // 保留兩位小數
   return `${size.toFixed(2)} ${units[unitIndex]}`
 })
 
 const filteredLogs = computed<LogRecord[]>(() => {
-  // 根据模式选择数据源
+  // 根據模式選擇數據源
   const sourceRecords = viewMode.value === 'live' ? liveLogRecords.value : fileLogRecords.value
 
   return sourceRecords.filter(({ level, textForFilter }) => {
@@ -106,11 +106,11 @@ const filteredLogs = computed<LogRecord[]>(() => {
       WARN: 3,
       ERROR: 4,
     }
-    // 首先按日志等级筛选
+    // 首先按日誌等級篩選
     if (logLevelPriority[level] < logLevelPriority[selectedLevel.value]) {
       return false
     }
-    // 然后按过滤文本筛选
+    // 然后按過濾文本篩選
     if (filterText.value === '') {
       return true
     }
@@ -125,22 +125,22 @@ onMounted(async () => {
     console.error(result.error)
     return
   }
-  // 检查日志目录大小
+  // 檢查日誌目錄大小
   if (result.data > 50 * 1024 * 1024) {
     notification.warning({
-      title: '日志目录大小超过50MB，请及时清理日志文件',
+      title: '日誌目錄大小超過50MB，請及時清理日誌檔案',
       description: () => (
         <>
           <div>
-            点击右上角的 <span class="bg-gray-2 px-1">日志</span> 按钮
+            點擊右上角的 <span class="bg-gray-2 px-1">日誌</span> 按鈕
           </div>
           <div>
-            里边有 <span class="bg-gray-2 px-1">打开日志目录</span> 按钮
+            里邊有 <span class="bg-gray-2 px-1">打開日誌目錄</span> 按鈕
           </div>
           <div>
-            你也可以在里边取消勾选 <span class="bg-gray-2 px-1">输出文件日志</span>
+            你也可以在里邊取消勾選 <span class="bg-gray-2 px-1">輸出檔案日誌</span>
           </div>
-          <div>这样将不再产生文件日志</div>
+          <div>這樣將不再產生檔案日誌</div>
         </>
       ),
     })
@@ -248,7 +248,7 @@ function clearLiveLogRecords() {
 }
 
 async function showLogsDirInFileManager() {
-  const logsDir = await path.join(await appDataDir(), '日志')
+  const logsDir = await path.join(await appDataDir(), '日誌')
   const result = await commands.showPathInFileManager(logsDir)
   if (result.status === 'error') {
     console.error(result.error)
@@ -256,7 +256,7 @@ async function showLogsDirInFileManager() {
 }
 
 async function openLogFile() {
-  const logsDir = await path.join(await appDataDir(), '日志')
+  const logsDir = await path.join(await appDataDir(), '日誌')
 
   const selectedFilePath = await open({
     defaultPath: logsDir,
@@ -437,9 +437,9 @@ const LogRecordComponent = defineComponent({
     <n-dialog :showIcon="false" @close="showing = false" style="width: 95%">
       <template #header>
         <div class="text-lg font-bold flex items-center gap-2">
-          <span v-if="viewMode === 'live'">📡 实时日志</span>
+          <span v-if="viewMode === 'live'">📡 實時日誌</span>
           <span v-else>
-            📂 文件日志
+            📂 檔案日誌
             <n-tag class="ml-2" type="primary" size="small">
               {{ currentFileName }}
             </n-tag>
@@ -449,15 +449,15 @@ const LogRecordComponent = defineComponent({
 
       <div class="mb-2 flex flex-wrap">
         <n-input-group class="flex-1 mr-4">
-          <n-input v-model:value="filterText" placeholder="关键词过滤..." clearable />
+          <n-input v-model:value="filterText" placeholder="關鍵詞過濾..." clearable />
           <n-select v-model:value="selectedLevel" :options="logLevelOptions" style="width: 120px" />
         </n-input-group>
 
         <n-button v-if="viewMode === 'file'" class="mr-2" type="primary" secondary @click="exitFileMode">
-          返回实时日志
+          返回實時日誌
         </n-button>
 
-        <n-button type="primary" @click="openLogFile">打开日志文件</n-button>
+        <n-button type="primary" @click="openLogFile">打開日誌檔案</n-button>
       </div>
 
       <div class="relative h-[calc(100vh-250px)]!">
@@ -492,8 +492,8 @@ const LogRecordComponent = defineComponent({
       </div>
 
       <div class="pt-2 flex flex-wrap items-center">
-        <n-checkbox v-model:checked="store.config.enableFileLogger">输出文件日志</n-checkbox>
-        <n-button class="ml-2" size="small" @click="showLogsDirInFileManager">打开日志目录</n-button>
+        <n-checkbox v-model:checked="store.config.enableFileLogger">輸出檔案日誌</n-checkbox>
+        <n-button class="ml-2" size="small" @click="showLogsDirInFileManager">打開日誌目錄</n-button>
         <n-tag class="ml-1" size="small" :bordered="false">
           {{ formatedLogsDirSize }}
         </n-tag>
@@ -505,7 +505,7 @@ const LogRecordComponent = defineComponent({
           size="small"
           type="error"
           @click="clearLiveLogRecords">
-          清空实时日志
+          清空實時日誌
         </n-button>
       </div>
     </n-dialog>

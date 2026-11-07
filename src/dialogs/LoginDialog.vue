@@ -20,11 +20,11 @@ async function onLogin() {
     return
   }
   if (username.value === '') {
-    message.error('请输入用户名')
+    message.error('請輸入使用者名')
     return
   }
   if (password.value === '') {
-    message.error('请输入密码')
+    message.error('請輸入密碼')
     return
   }
 
@@ -34,7 +34,7 @@ async function onLogin() {
     return
   }
   store.userProfile = result.data
-  message.success('登录成功')
+  message.success('登入成功')
   if (remember.value) {
     store.config.username = username.value
     store.config.password = password.value
@@ -56,26 +56,27 @@ function clearUsernameAndPasswordInConfig() {
   <n-modal v-model:show="showing">
     <n-dialog
       :showIcon="false"
-      title="账号登录"
-      positive-text="登录"
+      title="賬號登入"
+      positive-text="登入"
       @positive-click="onLogin"
       @close="showing = false"
       @keydown.enter="onLogin">
       <div class="flex flex-col gap-2">
-        <FloatLabelInput label="用户名" v-model:value="username" />
-        <FloatLabelInput label="密码" v-model:value="password" type="password" />
+        <FloatLabelInput label="使用者名" v-model:value="username" />
+        <FloatLabelInput label="密碼" v-model:value="password" type="password" />
         <div class="flex justify-between">
           <n-tooltip>
-            用户名和密码将以明文保存在配置文件中
+            使用者名和密碼將以明文保存在配置檔案中
             <template #trigger>
-              <n-checkbox v-model:checked="remember">记住我</n-checkbox>
+              <n-checkbox v-model:checked="remember">記住我</n-checkbox>
             </template>
           </n-tooltip>
           <n-button type="primary" size="tiny" secondary @click="clearUsernameAndPasswordInConfig">
-            清除配置文件中的用户名和密码
+            清除配置檔案中的使用者名和密碼
           </n-button>
         </div>
       </div>
     </n-dialog>
   </n-modal>
 </template>
+=

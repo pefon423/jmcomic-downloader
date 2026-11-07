@@ -5,9 +5,9 @@ import { NCheckbox, NInputGroup, NInputGroupLabel, NInputNumber, NSelect, NToolt
 const store = useStore()
 
 const exportSkipModeOptions = [
-  { label: '不跳过，每次都重新导出', value: 'None' },
-  { label: '跳过已存在的文件', value: 'SkipExisting' },
-  { label: '跳过曾导出过的章节', value: 'SkipExported' },
+  { label: '不跳過，每次都重新導出', value: 'None' },
+  { label: '跳過已存在的檔案', value: 'SkipExisting' },
+  { label: '跳過曾導出過的章節', value: 'SkipExported' },
 ]
 </script>
 
@@ -15,7 +15,7 @@ const exportSkipModeOptions = [
   <div v-if="store.config !== undefined" class="flex flex-col">
     <div class="flex gap-1 items-center">
       <n-input-group class="w-70">
-        <n-input-group-label size="small">创建pdf并发数</n-input-group-label>
+        <n-input-group-label size="small">創建pdf并發數</n-input-group-label>
         <n-input-number
           class="w-full"
           v-model:value="store.config.createPdfConcurrency"
@@ -26,41 +26,41 @@ const exportSkipModeOptions = [
       <n-tooltip placement="top" trigger="hover">
         <div>
           <span>在</span>
-          <span class="rounded bg-gray-500 px-1">章节详情</span>
-          <span>里手动勾选导出的PDF一律不会自动合并</span>
+          <span class="rounded bg-gray-500 px-1">章節詳情</span>
+          <span>里手動勾選導出的PDF一律不會自動合并</span>
         </div>
         <div>
           <span>只有在</span>
-          <span class="rounded bg-gray-500 px-1">本地库存</span>
-          <span>里直接导出整部作品为PDF</span>
+          <span class="rounded bg-gray-500 px-1">本地庫存</span>
+          <span>里直接導出整部作品為PDF</span>
         </div>
         <div>
-          <span>且导出策略不为</span>
-          <span class="rounded bg-gray-500 px-1">跳过曾导出过的章节</span>
-          <span>时才会触发自动合并</span>
+          <span>且導出策略不為</span>
+          <span class="rounded bg-gray-500 px-1">跳過曾導出過的章節</span>
+          <span>時才會觸發自動合并</span>
         </div>
         <template #trigger>
-          <n-checkbox class="ml-4 w-fit" v-model:checked="store.config.enableMergePdf">创建完成后自动合并</n-checkbox>
+          <n-checkbox class="ml-4 w-fit" v-model:checked="store.config.enableMergePdf">創建完成后自動合并</n-checkbox>
         </template>
       </n-tooltip>
     </div>
 
     <n-tooltip placement="top" trigger="hover">
       <div>
-        <span>只影响</span>
-        <span class="rounded bg-gray-500 px-1">本地库存</span>
-        <span>里直接导出整部作品时的行为</span>
+        <span>只影響</span>
+        <span class="rounded bg-gray-500 px-1">本地庫存</span>
+        <span>里直接導出整部作品時的行為</span>
       </div>
       <div>
         <span>在</span>
-        <span class="rounded bg-gray-500 px-1">章节详情</span>
-        <span>里手动勾选导出时一律以</span>
-        <span class="rounded bg-gray-500 px-1">不跳过，每次都重新导出</span>
-        <span>处理</span>
+        <span class="rounded bg-gray-500 px-1">章節詳情</span>
+        <span>里手動勾選導出時一律以</span>
+        <span class="rounded bg-gray-500 px-1">不跳過，每次都重新導出</span>
+        <span>處理</span>
       </div>
       <template #trigger>
         <n-input-group class="mt-2 w-fit">
-          <n-input-group-label size="small">导出策略</n-input-group-label>
+          <n-input-group-label size="small">導出策略</n-input-group-label>
           <n-select
             v-model:value="store.config.exportSkipMode"
             :options="exportSkipModeOptions"
@@ -71,3 +71,4 @@ const exportSkipModeOptions = [
     </n-tooltip>
   </div>
 </template>
+獁
