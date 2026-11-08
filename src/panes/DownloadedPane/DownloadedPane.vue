@@ -56,14 +56,19 @@ watch(currentPage, () => {
 const loadingText = ref<string>('')
 const elapsedSec = ref<number>(0)
 
-// 監聽標簽頁變化，更新下載的漫畫列表
+// 程式啟動(元件掛載)時就開始載入，切到本地庫存分頁時再重新整理
 watch(
   () => store.currentTabName,
-  async () => {
-    if (store.currentTabName !== 'downloaded') {
-      return
+  () => {
+    if (store.currentTabName === 'downloaded') {
+      void loadDownloadedComics()
     }
+  },
+)
+void loadDownloadedComics()
 
+async function loadDownloadedComics() {
+  {
     if (loadingText.value !== '') {
       return
     }
@@ -90,9 +95,8 @@ watch(
       clearInterval(timer)
       loadingText.value = ''
     }
-  },
-  { immediate: true },
-)
+  }
+}
 
 async function selectExportDir() {
   if (store.config === undefined) {
