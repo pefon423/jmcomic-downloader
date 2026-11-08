@@ -5,7 +5,7 @@ import DownloadedComicCard from './components/DownloadedComicCard.vue'
 import { open } from '@tauri-apps/plugin-dialog'
 import { PhFolderOpen } from '@phosphor-icons/vue'
 import { useStore } from '../../store.ts'
-import { DropdownOption, NButton, NDropdown, NIcon, NInput, NInputGroup, NInputGroupLabel, NPagination } from 'naive-ui'
+import { DropdownOption, NButton, NDropdown, NIcon, NInput, NInputGroup, NInputGroupLabel, NPagination, NSpin } from 'naive-ui'
 import { PartialSelectionOptions, SelectionArea, SelectionEvent } from '@viselect/vue'
 import { PhChecks, PhCheck, PhX } from '@phosphor-icons/vue'
 import UpdateDownloadedComicsButton from './components/UpdateDownloadedComicsButton.vue'
@@ -52,6 +52,10 @@ watch(currentPage, () => {
   selectionAreaRef.value?.$el.scrollTo({ top: 0, behavior: 'instant' })
 })
 
+// 載入進度提示，空字串代表沒有在載入
+const loadingText = ref<string>('')
+const elapsedSec = ref<number>(0)
+
 // 監聽標簽頁變化，更新下載的漫畫列表
 watch(
   () => store.currentTabName,
@@ -60,13 +64,31 @@ watch(
       return
     }
 
+    if (loadingText.value !== '') {
+      return
+    }
+
     // 先列出有元數據json的漫畫，再在背景讀取整部打包的zip並補進清單
-    store.downloadedComics = await commands.getDownloadedComics()
-    const zipComics = await commands.getDownloadedZipComics()
-    const ids = new Set(store.downloadedComics.map((comic) => comic.id))
-    const extra = zipComics.filter((comic) => !ids.has(comic.id))
-    if (extra.length > 0) {
-      store.downloadedComics = [...store.downloadedComics, ...extra]
+    const startTime = Date.now()
+    const timer = setInterval(() => {
+      elapsedSec.value = Math.floor((Date.now() - startTime) / 1000)
+    }, 500)
+    elapsedSec.value = 0
+    try {
+      loadingText.value = '正在讀取漫畫資料夾…'
+      store.downloadedComics = await commands.getDownloadedComics()
+      const folderCount = store.downloadedComics.length
+
+      loadingText.value = `已列出 ${folderCount} 部，正在讀取打包的 zip…`
+      const zipComics = await commands.getDownloadedZipComics()
+      const ids = new Set(store.downloadedComics.map((comic) => comic.id))
+      const extra = zipComics.filter((comic) => !ids.has(comic.id))
+      if (extra.length > 0) {
+        store.downloadedComics = [...store.downloadedComics, ...extra]
+      }
+    } finally {
+      clearInterval(timer)
+      loadingText.value = ''
     }
   },
   { immediate: true },
@@ -256,6 +278,10 @@ function useDropdown() {
         </n-button>
       </n-input-group>
       <update-downloaded-comics-button />
+    </div>
+    <div v-if="loadingText !== ''" class="flex items-center gap-2 px-2 pt-1 text-sm text-gray-6 select-none">
+      <n-spin :size="14" />
+      <span>{{ loadingText }}（{{ elapsedSec }} 秒）</span>
     </div>
     <div class="flex gap-2 items-center px-2 select-none">
       <div class="animate-pulse text-sm text-red flex flex-col">
