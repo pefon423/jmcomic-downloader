@@ -11,6 +11,7 @@ const props = defineProps<{
   comicId: number
   comicTitle: string
   comicAuthor: string
+  comicDescription?: string | null
   comicCategory: CategoryRespData
   comicCategorySub: CategorySubRespData
   comicDownloaded: boolean
@@ -64,6 +65,12 @@ async function showComicDownloadDirInFileManager() {
           </span>
           <span class="text-red">作者：{{ comicAuthor }}</span>
           <span class="text-gray">分類：{{ comicCategory.title }} {{ comicCategorySub.title }}</span>
+          <span
+            v-if="comicDescription !== undefined && comicDescription !== null && comicDescription !== ''"
+            class="text-sm text-gray-6 line-clamp-2 mt-1"
+            :title="comicDescription">
+            敘述：{{ comicDescription }}
+          </span>
         </div>
         <div class="flex">
           <IconButton v-if="comicDownloaded" title="打開下載目錄" @click="showComicDownloadDirInFileManager">

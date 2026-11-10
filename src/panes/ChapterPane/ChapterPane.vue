@@ -73,6 +73,12 @@ async function showComicDownloadDirInFileManager() {
           <span class="font-bold text-lg line-clamp-2">{{ store.pickedComic.name }}</span>
           <span class="text-red">作者：{{ store.pickedComic.author }}</span>
           <span class="text-gray">標簽：{{ store.pickedComic.tags }}</span>
+          <span
+            v-if="store.pickedComic.description"
+            class="text-sm text-gray-6 line-clamp-4 mt-1"
+            :title="store.pickedComic.description">
+            敘述：{{ store.pickedComic.description }}
+          </span>
           <IconButton
             v-if="store.pickedComic.isDownloaded"
             class="mt-auto mr-auto"

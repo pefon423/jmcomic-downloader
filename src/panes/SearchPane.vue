@@ -106,6 +106,7 @@ async function search(keyword: string, page: number, sort: SearchSort) {
         :comic-id="comicInSearch.id"
         :comic-title="comicInSearch.name"
         :comic-author="comicInSearch.author"
+        :comic-description="comicInSearch.description"
         :comic-category="comicInSearch.category"
         :comic-category-sub="comicInSearch.categorySub"
         :comic-downloaded="comicInSearch.isDownloaded"

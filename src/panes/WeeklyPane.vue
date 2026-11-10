@@ -74,6 +74,7 @@ async function getWeekly() {
             :comic-id="comicInWeekly.id"
             :comic-title="comicInWeekly.name"
             :comic-author="comicInWeekly.author"
+            :comic-description="comicInWeekly.description"
             :comic-category="comicInWeekly.category"
             :comic-category-sub="comicInWeekly.category_sub"
             :comic-downloaded="comicInWeekly.is_downloaded"

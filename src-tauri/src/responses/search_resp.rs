@@ -37,6 +37,8 @@ pub struct ComicInSearchRespData {
     pub id: String,
     pub author: String,
     pub name: String,
+    #[serde(default)]
+    pub description: Option<String>,
     pub image: String,
     pub category: CategoryRespData,
     #[serde(rename = "category_sub")]

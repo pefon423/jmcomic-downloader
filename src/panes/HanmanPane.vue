@@ -48,6 +48,7 @@ async function getLatestHanman(page: number) {
         :comic-id="comicInHanman.id"
         :comic-title="comicInHanman.name"
         :comic-author="comicInHanman.author"
+        :comic-description="comicInHanman.description"
         :comic-category="comicInHanman.category"
         :comic-category-sub="comicInHanman.categorySub"
         :comic-downloaded="comicInHanman.isDownloaded"

@@ -76,6 +76,9 @@ async function showComicDownloadDirInFileManager() {
         {{ comic.name }}
       </span>
       <span class="text-red">作者：{{ comic.author }}</span>
+      <span v-if="comic.description" class="text-sm text-gray-6 line-clamp-2 mt-1" :title="comic.description">
+        敘述：{{ comic.description }}
+      </span>
       <div class="flex mt-auto gap-col-2">
         <IconButton title="打開下載目錄" @click="showComicDownloadDirInFileManager">
           <PhFolderOpen :size="24" />

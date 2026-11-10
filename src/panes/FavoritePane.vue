@@ -110,6 +110,7 @@ async function syncFavoriteFolder() {
         :comic-id="comicInFavorite.id"
         :comic-title="comicInFavorite.name"
         :comic-author="comicInFavorite.author"
+        :comic-description="comicInFavorite.description"
         :comic-category="comicInFavorite.category"
         :comic-category-sub="comicInFavorite.categorySub"
         :comic-downloaded="comicInFavorite.isDownloaded"
