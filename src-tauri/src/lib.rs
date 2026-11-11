@@ -61,6 +61,8 @@ pub fn run() {
             sync_favorite_folder,
             get_downloaded_comics,
             get_downloaded_zip_comics,
+            get_cached_description,
+            fetch_comic_description,
             export_cbz,
             export_pdf,
             export_cbz_chapters,

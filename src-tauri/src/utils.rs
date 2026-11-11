@@ -42,6 +42,7 @@ pub fn md5_hex(data: &str) -> String {
 #[instrument(level = "error", skip_all)]
 pub fn create_id_to_dir_map(app: &AppHandle) -> eyre::Result<HashMap<i64, PathBuf>> {
     let mut id_to_dir_map: HashMap<i64, PathBuf> = HashMap::new();
+    let mut descriptions: Vec<(i64, String)> = Vec::new();
     let download_dir = app.get_config().read().download_dir.clone();
     if !download_dir.exists() {
         return Ok(id_to_dir_map);
@@ -71,8 +72,70 @@ pub fn create_id_to_dir_map(app: &AppHandle) -> eyre::Result<HashMap<i64, PathBu
             .ok_or_eyre(format!("`{}`没有父目录", path.display()))?;
 
         id_to_dir_map.entry(id).or_insert(parent.to_path_buf());
+
+        // 顺便把本地元数据里的描述收进缓存
+        if let Some(description) = comic_json
+            .get("description")
+            .and_then(serde_json::Value::as_str)
+        {
+            descriptions.push((id, description.to_string()));
+        }
     }
+    cache_descriptions(app, descriptions);
     Ok(id_to_dir_map)
+}
+
+const DESCRIPTION_CACHE_FILENAME: &str = "描述快取.json";
+
+static DESCRIPTION_CACHE: std::sync::OnceLock<std::sync::Mutex<HashMap<i64, String>>> =
+    std::sync::OnceLock::new();
+
+fn description_cache(app: &AppHandle) -> &'static std::sync::Mutex<HashMap<i64, String>> {
+    use tauri::Manager;
+    DESCRIPTION_CACHE.get_or_init(|| {
+        let map = app
+            .path()
+            .app_data_dir()
+            .ok()
+            .and_then(|dir| std::fs::read_to_string(dir.join(DESCRIPTION_CACHE_FILENAME)).ok())
+            .and_then(|s| serde_json::from_str(s.trim_start_matches('\u{feff}')).ok())
+            .unwrap_or_default();
+        std::sync::Mutex::new(map)
+    })
+}
+
+/// 读取缓存里的漫画描述(空字符串代表确认过没有描述)
+pub fn cached_description(app: &AppHandle, comic_id: i64) -> Option<String> {
+    description_cache(app).lock().ok()?.get(&comic_id).cloned()
+}
+
+/// 把漫画描述存进缓存，有变化时写回app数据目录下的`描述快取.json`
+pub fn cache_descriptions<I: IntoIterator<Item = (i64, String)>>(app: &AppHandle, items: I) {
+    use tauri::Manager;
+    let Ok(mut cache) = description_cache(app).lock() else {
+        return;
+    };
+    let mut changed = false;
+    for (id, description) in items {
+        if cache.get(&id) != Some(&description) {
+            cache.insert(id, description);
+            changed = true;
+        }
+    }
+    if !changed {
+        return;
+    }
+    let Ok(dir) = app.path().app_data_dir() else {
+        return;
+    };
+    match serde_json::to_string(&*cache) {
+        Ok(json) => {
+            if let Err(err) = std::fs::write(dir.join(DESCRIPTION_CACHE_FILENAME), json) {
+                tracing::warn!("写入描述缓存失败: {err}");
+            }
+        }
+        Err(err) => tracing::warn!("序列化描述缓存失败: {err}"),
+    }
 }
 
 /// 在本地（目录或zip）中扫描到的漫画

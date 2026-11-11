@@ -163,6 +163,28 @@ pub async fn get_latest_hanman(app: AppHandle, page: i64) -> CommandResult<Searc
     Ok(search_result)
 }
 
+/// 只查本地描述缓存，不发请求
+#[allow(clippy::needless_pass_by_value)]
+#[tauri::command]
+#[specta::specta]
+pub fn get_cached_description(app: AppHandle, comic_id: i64) -> Option<String> {
+    utils::cached_description(&app, comic_id)
+}
+
+/// 缓存没有时才请求完整漫画信息，并把描述写进缓存
+#[tauri::command]
+#[specta::specta]
+#[instrument(level = "error", skip_all, fields(comic_id = comic_id))]
+pub async fn fetch_comic_description(app: AppHandle, comic_id: i64) -> CommandResult<String> {
+    if let Some(description) = utils::cached_description(&app, comic_id) {
+        return Ok(description);
+    }
+    let comic = utils::get_comic(app, comic_id)
+        .await
+        .map_err(|err| CommandError::from("获取漫画描述失败", err))?;
+    Ok(comic.description)
+}
+
 #[tauri::command]
 #[specta::specta]
 #[instrument(level = "error", skip_all, fields(aid = aid))]

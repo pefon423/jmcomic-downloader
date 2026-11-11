@@ -58,6 +58,8 @@ impl Comic {
         fields(comic_id = comic.id, comic_title = comic.name)
     )]
     pub fn from_comic_resp_data(app: &AppHandle, comic: GetComicRespData) -> eyre::Result<Comic> {
+        utils::cache_descriptions(app, [(comic.id, comic.description.clone())]);
+
         let mut chapter_infos: Vec<ChapterInfo> = comic
             .series
             .into_iter()

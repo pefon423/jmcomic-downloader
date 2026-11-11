@@ -31,6 +31,14 @@ impl GetFavoriteResult {
     ) -> eyre::Result<GetFavoriteResult> {
         let id_to_dir_map = utils::create_id_to_dir_map(app)?;
 
+        utils::cache_descriptions(
+            app,
+            resp_data.list.iter().filter_map(|comic| {
+                let description = comic.description.clone().filter(|d| !d.is_empty())?;
+                Some((comic.id.parse().ok()?, description))
+            }),
+        );
+
         let list = resp_data
             .list
             .into_iter()

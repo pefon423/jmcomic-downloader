@@ -57,11 +57,17 @@ impl SearchResult {
     ) -> eyre::Result<SearchResult> {
         let id_to_dir_map = utils::create_id_to_dir_map(app)?;
 
-        let content = search_resp_data
+        let mut content = search_resp_data
             .content
             .into_iter()
             .map(|comic| ComicInSearch::from_resp_data(comic, &id_to_dir_map))
-            .collect::<eyre::Result<_>>()?;
+            .collect::<eyre::Result<Vec<ComicInSearch>>>()?;
+        // 列表API没有描述，用本地缓存补上
+        for comic in &mut content {
+            if comic.description.is_none() {
+                comic.description = utils::cached_description(app, comic.id);
+            }
+        }
 
         let search_result = SearchResult {
             search_query: search_resp_data.search_query,

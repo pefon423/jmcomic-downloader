@@ -22,6 +22,15 @@ impl GetWeeklyResult {
     pub fn from_resp_data(app: &AppHandle, resp_data: GetWeeklyRespData) -> eyre::Result<Self> {
         let id_to_dir_map = utils::create_id_to_dir_map(app)?;
 
+        utils::cache_descriptions(
+            app,
+            resp_data
+                .list
+                .iter()
+                .filter(|comic| !comic.description.is_empty())
+                .map(|comic| (comic.id, comic.description.clone())),
+        );
+
         let list = resp_data
             .list
             .into_iter()
