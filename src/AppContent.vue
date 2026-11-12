@@ -12,7 +12,7 @@ import { PhInfo, PhUser, PhClockCounterClockwise } from '@phosphor-icons/vue'
 import DownloadedPane from './panes/DownloadedPane/DownloadedPane.vue'
 import { useStore } from './store.ts'
 import LogDialog from './dialogs/LogDialog.vue'
-import WeeklyPane from './panes/WeeklyPane.vue'
+import SerialPane from './panes/SerialPane.vue'
 import HanmanPane from './panes/HanmanPane.vue'
 
 const store = useStore()
@@ -69,8 +69,8 @@ onMounted(async () => {
       <n-tab-pane class="h-full overflow-auto p-0!" name="favorite" tab="收藏夾" display-directive="show">
         <FavoritePane />
       </n-tab-pane>
-      <n-tab-pane class="h-full overflow-auto p-0!" name="weekly" tab="每週必看" display-directive="show">
-        <WeeklyPane />
+      <n-tab-pane class="h-full overflow-auto p-0!" name="serial" tab="每週連載" display-directive="show">
+        <SerialPane />
       </n-tab-pane>
       <n-tab-pane class="h-full overflow-auto p-0!" name="hanman" tab="最新韓漫" display-directive="show">
         <HanmanPane />

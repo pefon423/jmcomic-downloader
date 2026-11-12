@@ -161,6 +161,14 @@ async syncFavoriteFolder() : Promise<Result<null, CommandError>> {
 async getDownloadedComics() : Promise<Comic[]> {
     return await TAURI_INVOKE("get_downloaded_comics");
 },
+async getWeeklySerial(page: number) : Promise<Result<SearchResult, CommandError>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_weekly_serial", { page }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getCachedDescription(comicId: number) : Promise<string | null> {
     return await TAURI_INVOKE("get_cached_description", { comicId });
 },

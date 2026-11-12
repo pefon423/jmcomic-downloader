@@ -163,6 +163,31 @@ pub async fn get_latest_hanman(app: AppHandle, page: i64) -> CommandResult<Searc
     Ok(search_result)
 }
 
+/// 每周连载：用`连载中`标签搜索，按最新更新排序
+#[tauri::command(async)]
+#[specta::specta]
+#[instrument(level = "error", skip_all, fields(page = page))]
+pub async fn get_weekly_serial(app: AppHandle, page: i64) -> CommandResult<SearchResult> {
+    let jm_client = app.get_jm_client();
+
+    let search_resp = jm_client
+        .search("連載中", page, crate::types::SearchSort::Latest)
+        .await
+        .map_err(|err| CommandError::from("获取每周连载失败", err))?;
+
+    let crate::responses::SearchResp::SearchRespData(resp_data) = search_resp else {
+        return Err(CommandError::from(
+            "获取每周连载失败",
+            eyre!("搜索结果不是漫画列表"),
+        ));
+    };
+
+    let search_result = SearchResult::from_resp_data(&app, resp_data)
+        .map_err(|err| CommandError::from("获取每周连载失败", err))?;
+
+    Ok(search_result)
+}
+
 /// 只查本地描述缓存，不发请求
 #[allow(clippy::needless_pass_by_value)]
 #[tauri::command]

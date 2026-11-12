@@ -12,6 +12,7 @@ export const useStore = defineStore('store', () => {
   const getFavoriteResult = ref<GetFavoriteResult>()
   const searchResult = ref<SearchResult>()
   const hanmanResult = ref<SearchResult>()
+  const serialResult = ref<SearchResult>()
   const progressesPaneTabName = ref<ProgressesPaneTabName>('uncompleted')
   const getWeeklyResult = ref<GetWeeklyResult>()
   const downloadedComics = ref<Comic[]>([])
@@ -25,6 +26,7 @@ export const useStore = defineStore('store', () => {
     getFavoriteResult,
     searchResult,
     hanmanResult,
+    serialResult,
     progressesPaneTabName,
     getWeeklyResult,
     downloadedComics,

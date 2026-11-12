@@ -55,7 +55,7 @@ async function showComicDownloadDirInFileManager() {
 
 <template>
   <div class="h-full flex flex-col box-border">
-    <n-empty v-if="store.pickedComic === undefined" description="請先選擇漫畫(搜尋、收藏夾、每週必看、本地庫存)" />
+    <n-empty v-if="store.pickedComic === undefined" description="請先選擇漫畫(搜尋、收藏夾、每週連載、本地庫存)" />
     <template v-else>
       <ChapterDownloadPanel
         v-if="chapterPaneMode === 'download'"

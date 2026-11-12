@@ -53,6 +53,7 @@ onMounted(async () => {
           await syncPickedComic()
           await syncComicInSearch(progressData)
           await syncComicInHanman(progressData)
+          await syncComicInSerial(progressData)
           await syncComicInFavorite(progressData)
           await syncComicInWeekly(progressData)
         }
@@ -122,6 +123,22 @@ async function syncComicInHanman(progressData: ProgressData) {
     return
   }
   const comic = store.hanmanResult.content.find((comic) => comic.id === progressData.comic.id)
+  if (comic === undefined) {
+    return
+  }
+  const result = await commands.getSyncedComicInSearch(comic)
+  if (result.status === 'error') {
+    console.error(result.error)
+    return
+  }
+  Object.assign(comic, result.data)
+}
+
+async function syncComicInSerial(progressData: ProgressData) {
+  if (store.serialResult === undefined) {
+    return
+  }
+  const comic = store.serialResult.content.find((comic) => comic.id === progressData.comic.id)
   if (comic === undefined) {
     return
   }
